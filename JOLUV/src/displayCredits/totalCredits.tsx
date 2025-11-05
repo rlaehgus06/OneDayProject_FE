@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-import type { graduacteCradits } from '../../types/totalCredits';
+import type { graduacteCradits } from '../types/totalCredits';
 
 // interface : 따라야 하는 규칙. 요구사항
 interface CreditProgressProps {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const SummaryPage: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50 p-8">
       <h1 className="mb-8 text-4xl font-bold text-gray-800">
         요약 페이지
       </h1>
@@ -14,4 +14,4 @@ const SummaryPage: React.FC = () => {
   );
 };
 
-export default SummaryPage;
+export default SummaryPage; 

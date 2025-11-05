@@ -1,7 +1,7 @@
 // src/components/EachCredits.tsx (수정된 Tailwind CSS)
 
 import React from 'react';
-import type { eachCredits } from '../../types/totalCredits';
+import type { eachCredits } from '../types/totalCredits';
 
 interface CreditProgressProps {
   data: eachCredits;

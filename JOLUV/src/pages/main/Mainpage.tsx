@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import TotalCredits from '../../components/displayCredits/totalCredits';
-import  EachCredits from '../../components/displayCredits/eachCredits';
+import TotalCredits from '../../displayCredits/totalCredits';
+import EachCredits from '../../displayCredits/eachCredits';
 
 // 아이콘을 위한 간단한 placeholder 컴포넌트
 const IconPlaceholder: React.FC<{ className?: string }> = ({ className }) => (
@@ -11,44 +11,22 @@ const IconPlaceholder: React.FC<{ className?: string }> = ({ className }) => (
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // 페이지 이동을 처리하는 함수들 (필요에 따라 경로 수정)
-  const handleLoginClick = () => {
-    navigate('/login'); 
-    console.log("Login button clicked");
-  };
+  // 'handleLoginClick'은 Header.tsx로 이동했으므로 여기서는 삭제합니다.
 
+  // 카드 클릭 시 페이지 이동
   const handleCardClick = (path: string) => {
     navigate(path);
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans">
-      {/* 1. Header Section */}
-      <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        {/* Logo */}
-        <div className="text-2xl font-bold text-blue-600">KNU</div>
+    // 1. 가장 바깥쪽 div를 삭제하고 React Fragment(<>)로 변경
+    // Layout.tsx가 이미 배경색과 폰트를 적용하고 있습니다.
+    <>
+      {/* 2. <header> 섹션 전체 삭제 (Layout.tsx가 담당) */}
 
-        {/* Search Bar */}
-        <div className="relative flex-1 max-w-lg mx-4">
-          <input
-            type="text"
-            placeholder="search..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <span className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400">Q</span>
-        </div>
-
-        {/* Login Button */}
-        <button
-          onClick={handleLoginClick}
-          className="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-700 transition"
-        >
-          Login
-        </button>
-      </header>
-
-      {/* 2. Main Content Section */}
-      <main className="p-8">
+      {/* 3. <main> 태그에 'pt-20' 추가 */}
+      {/* 고정된 헤더(Header)에 콘텐츠가 가려지지 않도록 상단 여백을 줍니다. */}
+      <main className="p-8 pt-20">
         {/* Title Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">KNU 졸업요건</h1>
@@ -57,7 +35,7 @@ const MainPage: React.FC = () => {
 
         {/* Icon Button Grid Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center mb-12">
-          {/* Card 1: AI */}
+          {/* Card 1: 수강과목정리 */}
           <div
             onClick={() => console.log("AI card clicked")}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
@@ -91,30 +69,23 @@ const MainPage: React.FC = () => {
           </div>
         </div>
 
-        {/* List Section */}
+        {/* 3. 학점 현황 섹션 */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-2xl font-bold mb-4">List</h3>
-          <ul className="space-y-2">
-            <li className="p-2 border-b">항목 1</li>
-            <li className="p-2 border-b">항목 2</li>
-            <li className="p-2">항목 3</li>
-          </ul>
-        </div>
-        {/*이부분이 각각의 학점 관련 컴포넌트를 가로 배치해둔 것 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex space-x-8 items-stretch"> 
+          <h3 className="text-2xl font-bold mb-6 text-center">나의 학점 현황</h3>
+          
+          <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8 items-stretch">
             {/* 1. 왼쪽 컴포넌트: 전체 학점 현황 */}
             <div className="flex-1">
               <TotalCredits data={{totalCredits: 120, completedCredits:90}}/>
             </div>
             {/* 2. 오른쪽 컴포넌트: 전공/교양 학점 현황 */}
             <div className="flex-1">
-                <EachCredits data={{MajorCredits:50, CultureCredits:30}}/>
+              <EachCredits data={{MajorCredits:50, CultureCredits:30}}/>
             </div>
+          </div>
         </div>
-      </div>
       </main>
-    </div>
+    </>
   );
 };
 
