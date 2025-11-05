@@ -37,7 +37,7 @@ const MainPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center mb-12">
           {/* Card 1: 수강과목정리 */}
           <div
-            onClick={() => console.log("AI card clicked")}
+            onClick={() => handleCardClick('/score-management')}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           >
             <IconPlaceholder />

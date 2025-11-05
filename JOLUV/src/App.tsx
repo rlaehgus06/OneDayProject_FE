@@ -8,6 +8,7 @@ import LoginPage from './pages/login/index.tsx';
 import SignupPage from './pages/login/signup.tsx';
 import ChecklistPage from './pages/checklist/index.tsx';
 import SummaryPage from './pages/summary/index.tsx';
+import ScoreManagementPage from './pages/score_management/index.tsx';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="signup" element={<SignupPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
         <Route path="summary" element={<SummaryPage />} />
+        <Route path="score-management" element={<ScoreManagementPage />} />
         {/* (다른 페이지 경로들도 여기에 추가) */}
       </Route>
     </Routes>

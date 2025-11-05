@@ -1,6 +1,5 @@
 /* 페이지속의 페이지 ( 과목별 성적과 재이수 필요성 ) */
 
-/* App.css */
 .container {
   padding: 20px;
   max-width: 1200px;
@@ -32,6 +31,6 @@
 
 .cards-container {
   display: flex;
-  gap: 16px;
+  gap: 64px;
   flex-wrap: wrap;
 }

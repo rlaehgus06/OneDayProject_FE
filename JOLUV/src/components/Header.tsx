@@ -16,7 +16,7 @@ const Header: React.FC = () => {
 
       {/* 네비게이션 링크 영역 (새로 추가/수정됨) */}
       <nav className="flex items-center space-x-8">
-        <Link to="/courses" className="text-gray-700 font-semibold hover:text-blue-600 transition">
+        <Link to="/score-management" className="text-gray-700 font-semibold hover:text-blue-600 transition">
           수강과목정리
         </Link>
         <Link to="/checklist" className="text-gray-700 font-semibold hover:text-blue-600 transition">
