@@ -55,7 +55,7 @@ const MainPage: React.FC = () => {
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           >
             <IconPlaceholder />
-            <h2 className="text-xl font-semibold text-gray-700">AI 추천 계획표</h2>
+            <h2 className="text-xl font-semibold text-gray-700">마이페이지</h2>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
