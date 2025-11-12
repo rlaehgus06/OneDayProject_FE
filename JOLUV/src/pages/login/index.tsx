@@ -24,11 +24,6 @@ const LoginPage: React.FC = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         
         {/* KNU 로고를 폼 상단에 추가 (옵션) */}
-        <div className="text-center mb-6">
-          <Link to="/" className="text-3xl font-bold text-blue-600">
-            KNU
-          </Link>
-        </div>
         
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">로그인</h1>
         <form onSubmit={handleSubmit}>
@@ -67,7 +62,7 @@ const LoginPage: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300"
+            className="w-full bg-pink-400 text-white py-3 rounded-lg font-bold hover:bg-pink-600 transition duration-300"
           >
             Log In
           </button>

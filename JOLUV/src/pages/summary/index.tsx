@@ -54,7 +54,7 @@ const SummaryPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
+    <div className=" min-h-screen p-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">학점 관리</h1>
 
       {/* 1. 상단 학점 요약 카드 */}

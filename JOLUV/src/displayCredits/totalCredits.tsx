@@ -10,7 +10,6 @@ interface CreditProgressProps {
 // React.FC를 사용하지 않고 함수 컴포넌트로 정의합니다.
 function TotalCredits({ data }: CreditProgressProps) {
   const { totalCredits, completedCredits } = data;
-
   // 이수율 계산 (백분율)
   const progressPercentage = (completedCredits / totalCredits) * 100;
   // 소수점 1자리까지 표시

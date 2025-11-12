@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import TotalCredits from '../../displayCredits/totalCredits';
-import EachCredits from '../../displayCredits/eachCredits';
+ import TotalCredits from '../../components/displayCredits/totalCredits';
+ import EachCredits from '../../components/displayCredits/eachCredits';
 
 // 아이콘을 위한 간단한 placeholder 컴포넌트
 const IconPlaceholder: React.FC<{ className?: string }> = ({ className }) => (
@@ -11,22 +11,13 @@ const IconPlaceholder: React.FC<{ className?: string }> = ({ className }) => (
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // 'handleLoginClick'은 Header.tsx로 이동했으므로 여기서는 삭제합니다.
-
-  // 카드 클릭 시 페이지 이동
   const handleCardClick = (path: string) => {
     navigate(path);
   };
 
   return (
-    // 1. 가장 바깥쪽 div를 삭제하고 React Fragment(<>)로 변경
-    // Layout.tsx가 이미 배경색과 폰트를 적용하고 있습니다.
     <>
-      {/* 2. <header> 섹션 전체 삭제 (Layout.tsx가 담당) */}
-
-      {/* 3. <main> 태그에 'pt-20' 추가 */}
-      {/* 고정된 헤더(Header)에 콘텐츠가 가려지지 않도록 상단 여백을 줍니다. */}
-      <main className="p-8 pt-20">
+      <div className="p-8">
         {/* Title Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">KNU 졸업요건</h1>
@@ -35,13 +26,12 @@ const MainPage: React.FC = () => {
 
         {/* Icon Button Grid Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center mb-12">
-          {/* Card 1: 수강과목정리 */}
-          <div
-            onClick={() => handleCardClick('/score-management')}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-          >
-            <IconPlaceholder />
-            <h2 className="text-xl font-semibold text-gray-700">수강과목정리</h2>
+         {/* Card 1: 수강과목정리 */}
+        <div
+          onClick={() => handleCardClick('/score-management')}
+          className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+           <IconPlaceholder />
+          <h2 className="text-xl font-semibold text-gray-700">수강과목정리</h2>
           </div>
           {/* Card 2: Checklist Page */}
           <div
@@ -57,7 +47,7 @@ const MainPage: React.FC = () => {
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           >
             <IconPlaceholder />
-            <h2 className="text-xl font-semibold text-gray-700">학점 기록</h2>
+            <h2 className="text-xl font-semibold text-gray-700">학점기록</h2>
           </div>
           {/* Card 4: AI Plan */}
           <div
@@ -68,23 +58,19 @@ const MainPage: React.FC = () => {
             <h2 className="text-xl font-semibold text-gray-700">AI 추천 계획표</h2>
           </div>
         </div>
-
-        {/* 3. 학점 현황 섹션 */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-2xl font-bold mb-6 text-center">나의 학점 현황</h3>
-          
-          <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8 items-stretch">
-            {/* 1. 왼쪽 컴포넌트: 전체 학점 현황 */}
-            <div className="flex-1">
-              <TotalCredits data={{totalCredits: 120, completedCredits:90}}/>
-            </div>
-            {/* 2. 오른쪽 컴포넌트: 전공/교양 학점 현황 */}
-            <div className="flex-1">
-              <EachCredits data={{MajorCredits:50, CultureCredits:30}}/>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="md:col-span-2 lg:col-span-2">
+          <TotalCredits total={120} completed={90} percentage={75.0} />
         </div>
-      </main>
+        <div className="md:col-span-1 lg:col-span-1">
+          <EachCredits title="전공 학점" score={50} />
+        </div>
+        <div className="md:col-span-1 lg:col-span-1">
+          <EachCredits title="교양 학점" score={30} />
+        </div>
+      </div>
+        
+      </div>
     </>
   );
 };
