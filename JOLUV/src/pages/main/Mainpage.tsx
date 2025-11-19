@@ -51,7 +51,7 @@ const MainPage: React.FC = () => {
           </div>
           {/* Card 4: AI Plan */}
           <div
-            onClick={() => console.log("AI Plan card clicked")}
+            onClick={() => handleCardClick('/mypage')}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           >
             <IconPlaceholder />

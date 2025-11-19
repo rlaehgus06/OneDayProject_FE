@@ -1,0 +1,157 @@
+.mypage__layout {
+  display: flex;
+  align-items: stretch;      /* 세로 높이 자동 맞춤 */
+  gap: 0;                    /* 박스 사이 여백 완전 제거 */
+  justify-content: center;
+  width: 100%;
+  min-height: 700px;         /* 원하는 전체 높이 */
+}
+
+.mypage__container,
+.box__right {
+  flex: 1 1 0;
+  min-width: 440px;
+  min-height: 700px;
+  padding: 48px 32px;
+  margin: 0;
+  box-shadow: 0 8px 32px rgba(0,0,0, 0.04); /* 같은 그림자 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.mypage__container {
+  background: #fff;
+  border-radius: 24px 0 0 24px;
+}
+
+.box__right {
+  background: #f6f4f8;
+  border-radius: 0 24px 24px 0;
+}
+
+/* 프로필/헤더 섹션 */
+.mypage__header {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+.profile__img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ddd;
+}
+.user__name {
+  font-size: 2rem;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.user__info {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.user__track {
+  font-size: 1rem;
+  color: #e44097;
+}
+
+/* 졸업 체크리스트 */
+.mypage__checklist h2 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+.checklist__items {
+  margin-top: 20px;
+}
+.check__item {
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+.item__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.08rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.item__status {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.98rem;
+  background: #faf3cb;
+  color: #888;
+  font-weight: bold;
+}
+.item__status.working { background: #faf3cb; color: #e44097; }
+.item__status.notdone { background: #eee; color: #bbb; }
+.item__bar {
+  position: relative;
+  background: #eee;
+  height: 8px;
+  border-radius: 12px;
+}
+.item__bar--active {
+  position: absolute;
+  height: 100%;
+  background: #e44097;
+  border-radius: 12px;
+}
+
+/* 경력 및 활동 */
+.career__section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 18px;
+  color: #e44097;
+}
+.career__list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.career__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(228,64,151,0.04);
+  padding: 12px 14px;
+}
+.career__badge {
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #e44097;
+  color: #fff;
+  min-width: 51px;
+  text-align: center;
+}
+.career__badge--인턴십 { background: #6e8ad8; }
+.career__badge--대회 { background: #e44097; }
+.career__info {
+  flex: 1;
+}
+.career__title { font-size: 1.12rem; font-weight: bold; }
+.career__sub { font-size: 0.99rem; color: #888; margin-top: 2px;}
+.career__year { font-size: 0.92rem; color: #b889c7; margin-top: 2px;}
+
+/* 반응형: 모바일 시 세로로 변경 */
+@media (max-width: 900px) {
+  .mypage__layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .mypage__container, .box__right {
+    border-radius: 24px;
+    min-width: 0;
+    min-height: 400px;
+    margin-bottom: 16px;
+  }
+}
