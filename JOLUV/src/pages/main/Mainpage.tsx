@@ -8,7 +8,7 @@ import sugangLogo from '../../assets/sugang_logo.jpg';
 import checkLogo from '../../assets/check_logo.jpg';
 import hakjomLogo from '../../assets/hakjom_logo.jpg';
 import mypageLogo from '../../assets/mypage_logo.jpg';
-import titleLogo from '../../assets/knu_joluv_logo.png'; 
+import titleLogo from '../../assets/knu_joluv_logo.jpg'; 
 
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ const MainPage: React.FC = () => {
               alt="졸업요건 checklist" 
               className="h-24 w-auto mb-2 object-contain" 
             />
-            <h2 className="text-xl font-semibold text-gray-700">졸업요건 checklist</h2>
+            <h2 className="text-xl font-semibold text-gray-700">졸업요건 check</h2>
           </div>
 
           {/* 3. 학점기록 카드 */}

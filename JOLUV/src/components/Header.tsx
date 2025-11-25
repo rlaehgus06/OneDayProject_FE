@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import knuLogo from '../assets/knu_logo.png'; 
-import joluvLogo from '../assets/JOLUV_logo.png';
 
 const Header: React.FC = () => {
   return (
@@ -34,11 +33,6 @@ const Header: React.FC = () => {
         </Link>
         <Link to="/summary" className="text-gray-700 font-semibold hover:text-blue-600 transition">
           학점관리
-        </Link>
-        
-        {/* 👇 여기에 마이페이지 버튼을 추가했습니다 */}
-        <Link to="/mypage" className="text-gray-700 font-semibold hover:text-blue-600 transition">
-          마이페이지
         </Link>
 
         <Link to="/login" className="text-gray-700 font-semibold hover:text-blue-600 transition">
