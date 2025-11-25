@@ -1,5 +1,4 @@
-// src/pages/MyPage.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import './MyPage.css';
 
 interface ChecklistItem {
@@ -22,16 +21,35 @@ const checklist: ChecklistItem[] = [
   { title: '교양과목', progress: 24, total: 30, status: '진행중' },
 ];
 
-const careers: CareerItem[] = [
+const initialCareers: CareerItem[] = [
   { type: '대회', title: 'AI 경진대회 3위', sub: '네이버 AI 대회', year: '2025' },
   { type: '인턴십', title: 'KDN 데이터 분석 인턴', sub: '한국데이터넷', year: '2024' },
-  // 원하는 경력 추가
 ];
 
 const MyPage: React.FC = () => {
+  const [careers, setCareers] = useState<CareerItem[]>(initialCareers);
+  const [form, setForm] = useState<CareerItem>({
+    type: '대회',
+    title: '',
+    sub: '',
+    year: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddCareer = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (form.title && form.year) {
+      setCareers(prev => [{ ...form }, ...prev]);
+      setForm({ type: '대회', title: '', sub: '', year: '' });
+    }
+  };
+
   return (
     <div className="mypage__layout">
-      {/* 좌측 박스 */}
       <div className="mypage__container box__left">
         <header className="mypage__header">
           <div className="profile__img" />
@@ -64,13 +82,14 @@ const MyPage: React.FC = () => {
           </div>
         </section>
       </div>
-      {/* 우측 박스 */}
+
       <div className="mypage__container box__right">
         <section className="career__section">
           <h2>경력 및 활동</h2>
+          {/* 경력 리스트 */}
           <div className="career__list">
             {careers.map((career, idx) => (
-              <div className="career__item" key={idx}>
+              <div className="career__item" key={career.title + career.year + idx}>
                 <span className={`career__badge career__badge--${career.type}`}>
                   {career.type}
                 </span>
@@ -82,6 +101,41 @@ const MyPage: React.FC = () => {
               </div>
             ))}
           </div>
+          {/* 경력 추가 폼 */}
+          <form className="career__form" onSubmit={handleAddCareer}>
+            <div className="career__form-row">
+              <select name="type" value={form.type} onChange={handleChange}>
+                <option value="대회">대회</option>
+                <option value="인턴십">인턴십</option>
+              </select>
+              <input
+                name="title"
+                type="text"
+                placeholder="활동/경력명"
+                value={form.title}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="career__form-row">
+              <input
+                name="sub"
+                type="text"
+                placeholder="기관/세부"
+                value={form.sub}
+                onChange={handleChange}
+              />
+              <input
+                name="year"
+                type="text"
+                placeholder="연도"
+                value={form.year}
+                onChange={handleChange}
+                required
+              />
+              <button type="submit">추가</button>
+            </div>
+          </form>
         </section>
       </div>
     </div>

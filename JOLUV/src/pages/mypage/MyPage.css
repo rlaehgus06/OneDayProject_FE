@@ -155,3 +155,56 @@
     margin-bottom: 16px;
   }
 }
+.career__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 32px;
+  background: #f8f8fa;
+  border-radius: 14px;
+  padding: 12px 10px;
+  align-items: stretch;
+}
+.career__form-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.career__form select, .career__form input {
+  font-size: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 6px 10px;
+  outline: none;
+  flex: 1;
+}
+.career__form button {
+  background: #e44097;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.career-ani-enter {
+  opacity: 0;
+  transform: translateY(40px);
+}
+.career-ani-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.career-ani-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.career-ani-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}

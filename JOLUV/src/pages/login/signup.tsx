@@ -1,41 +1,40 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const SignupPage: React.FC = () => {
-  // 1. 회원가입에 필요한 정보들을 기억하기 위한 상태(state)
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  // 2. 회원가입 버튼을 눌렀을 때 실행될 함수
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // 페이지 새로고침 방지
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    // 비밀번호와 비밀번호 확인이 일치하는지 검사
     if (password !== passwordConfirm) {
       alert('비밀번호가 일치하지 않습니다.');
-      return; // 일치하지 않으면 함수 종료
+      return;
     }
 
-    console.log('회원가입 시도:', { name, email, password });
-    // TODO: 여기에 실제 서버로 회원가입 요청을 보내는 API 호출 코드를 추가합니다.
+    try {
+      const response = await axios.post('http://16.176.198.162:8080/', {
+        name,
+        email,
+        password,
+      });
+      console.log('회원가입 성공:', response.data);
+      // 성공 시 이후 처리 (예: 로그인 페이지 이동 등)
+    } catch (error) {
+      console.error('회원가입 실패:', error);
+      alert('회원가입 중 오류가 발생했습니다.');
+    }
   };
 
   return (
-    // 👇 1. flex-col을 지우고, 폼을 중앙 정렬하기 위해 flex items-center justify-center를 추가
     <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center">
-      
-      {/* 👇 2. Header Section (헤더 전체가 삭제되었습니다)
-      */}
-
-      {/* 👇 3. main 태그를 div로 변경하고, flex-grow를 삭제 */}
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        
-
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">회원가입</h1>
         <form onSubmit={handleSubmit}>
-          {/* Name Input */}
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
               이름
@@ -51,7 +50,6 @@ const SignupPage: React.FC = () => {
             />
           </div>
 
-          {/* Email Input */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
               이메일
@@ -67,7 +65,6 @@ const SignupPage: React.FC = () => {
             />
           </div>
 
-          {/* Password Input */}
           <div className="mb-6">
             <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
               비밀번호
@@ -83,7 +80,6 @@ const SignupPage: React.FC = () => {
             />
           </div>
 
-          {/* Password Confirmation Input */}
           <div className="mb-6">
             <label htmlFor="password-confirm" className="block text-gray-700 font-semibold mb-2">
               비밀번호 확인
@@ -99,7 +95,6 @@ const SignupPage: React.FC = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-pink-400 text-white py-3 rounded-lg font-bold hover:bg-pink-600 transition duration-300"
@@ -107,7 +102,6 @@ const SignupPage: React.FC = () => {
             회원가입
           </button>
 
-          {/* Link to Login Page */}
           <div className="text-center mt-6">
             <span className="text-gray-600">이미 계정이 있으신가요? </span>
             <Link to="/login" className="text-blue-600 font-semibold hover:underline">

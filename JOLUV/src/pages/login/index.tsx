@@ -1,33 +1,32 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';  // axios import
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('로그인 시도:', { email, password });
-    // TODO: 여기에 실제 서버로 로그인 요청을 보내는 API 호출 코드를 추가합니다.
+    try {
+      const response = await axios.post('http://16.176.198.162:8080/', {
+        email,
+        password
+      });
+      console.log('로그인 성공:', response.data);
+      // 로그인 성공 후 처리 (예: 토큰 저장, 페이지 이동 등)
+    } catch (error) {
+      console.error('로그인 실패:', error);
+    }
   };
 
-  return (
-    // 👇 flex flex-col을 삭제하고, 폼을 중앙 정렬하기 위해 flex items-center justify-center를 추가
-    <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center">
-      
-      {/* Header Section
-        이 부분이 삭제되었습니다.
-      */}
+  
 
-      {/* Login Form Section */}
-      {/* 👇 main 태그 대신 div를 사용하고, flex-grow를 삭제 */}
+  return (
+    <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        
-        {/* KNU 로고를 폼 상단에 추가 (옵션) */}
-        
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">로그인</h1>
         <form onSubmit={handleSubmit}>
-          {/* Email Input */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
               이메일
@@ -43,7 +42,6 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          {/* Password Input */}
           <div className="mb-6">
             <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
               비밀번호
@@ -59,14 +57,13 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-pink-400 text-white py-3 rounded-lg font-bold hover:bg-pink-600 transition duration-300"
           >
             Log In
           </button>
-          
+
           <div className="text-center mt-6">
             <span className="text-gray-600">계정이 없으신가요? </span>
             <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
