@@ -3,10 +3,6 @@ import axios from 'axios';
 import TotalCredits from '../../components/displayCredits/totalCredits';
 import EachCredits from '../../components/displayCredits/eachCredits';
 
-<<<<<<< HEAD
-// 과목 타입 정의
-=======
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
 interface Course {
   id: number;
   name: string;
@@ -16,35 +12,13 @@ interface Course {
 }
 
 const SummaryPage: React.FC = () => {
-<<<<<<< HEAD
-  // 과목 리스트 상태(직접 입력 + 서버에서 받아온 데이터)
-  const [courses, setCourses] = useState<Course[]>([]);
-
-  // 입력폼 상태
-=======
   // 초기값을 빈 배열로 설정
   const [courses, setCourses] = useState<Course[]>([]);
 
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
   const [courseName, setCourseName] = useState('');
   const [credits, setCredits] = useState('3');
   const [grade, setGrade] = useState('A+');
   const [category, setCategory] = useState('전공필수');
-<<<<<<< HEAD
-
-  // 서버에서 강의 데이터 받아오기
-  useEffect(() => {
-    axios.get<Course[]>('http://16.176.198.162:8080/api/v1/courses')
-      .then((response) => {
-        setCourses(response.data);
-      })
-      .catch((error) => {
-        console.error('강의 목록을 불러오지 못했습니다:', error);
-      });
-  }, []);
-
-  // 입력폼 추가 기능
-=======
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -78,23 +52,17 @@ const SummaryPage: React.FC = () => {
     fetchCourses();
   }, []);
 
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
   const handleAddCourse = (e: React.FormEvent) => {
     e.preventDefault();
     if (!courseName || !credits) {
       alert('과목명과 학점을 입력해주세요.');
       return;
     }
+
     const newCourse: Course = {
       id: Date.now(),
       name: courseName,
       credits: parseInt(credits, 10),
-<<<<<<< HEAD
-      grade,
-      category,
-    };
-    setCourses([...courses, newCourse]);
-=======
       grade: grade,
       category: category,
     };
@@ -102,22 +70,10 @@ const SummaryPage: React.FC = () => {
     // courses가 배열이 아닐 경우를 대비해 안전하게 처리
     setCourses(prev => Array.isArray(prev) ? [...prev, newCourse] : [newCourse]);
     
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
     setCourseName('');
     setCredits('3');
   };
 
-<<<<<<< HEAD
-  // 삭제 기능
-  const handleDeleteCourse = (id: number) => {
-    setCourses(courses.filter(course => course.id !== id));
-  };
-
-  return (
-    <div className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">학점 관리</h1>
-      {/* 학점 요약 카드 */}
-=======
   const handleDeleteCourse = (id: number) => {
     setCourses(prev => Array.isArray(prev) ? prev.filter(course => course.id !== id) : []);
   };
@@ -127,7 +83,6 @@ const SummaryPage: React.FC = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">학점 관리</h1>
 
       {/* 상단 학점 요약 카드 */}
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="md:col-span-2 lg:col-span-2">
           <TotalCredits total={120} completed={90} percentage={75.0} />
@@ -139,13 +94,6 @@ const SummaryPage: React.FC = () => {
           <EachCredits title="교양 학점" score={30} />
         </div>
       </div>
-<<<<<<< HEAD
-      {/* 학점 직접 입력 섹션 */}
-      <div className="bg-white p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">학점 직접 입력</h2>
-        <form onSubmit={handleAddCourse} className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 items-end">
-          <div>
-=======
 
       {/* 학점 직접 입력 및 리스트 섹션 */}
       <div className="bg-white p-6 rounded-xl shadow-md">
@@ -155,7 +103,6 @@ const SummaryPage: React.FC = () => {
            {/* ... 입력 폼 내용은 기존과 동일 ... */}
            {/* (코드 길이상 생략했지만, 기존 폼 코드 그대로 두시면 됩니다) */}
            <div>
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
             <label className="block text-sm font-medium text-gray-700">과목명</label>
             <input type="text" value={courseName} onChange={(e) => setCourseName(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="예) 자료구조" />
           </div>
@@ -165,43 +112,12 @@ const SummaryPage: React.FC = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">성적</label>
-<<<<<<< HEAD
-            <select
-              value={grade}
-              onChange={(e) => setGrade(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            >
-              <option>A+</option><option>A0</option><option>B+</option><option>B0</option>
-              <option>C+</option><option>C0</option><option>D+</option><option>D0</option>
-              <option>F</option><option>P</option><option>NP</option>
-=======
             <select value={grade} onChange={(e) => setGrade(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
               <option>A+</option><option>A0</option><option>B+</option><option>B0</option><option>C+</option><option>C0</option><option>D+</option><option>D0</option><option>F</option><option>P</option><option>NP</option>
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">이수구분</label>
-<<<<<<< HEAD
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            >
-              <option>전공필수</option><option>전공선택</option>
-              <option>교양</option><option>창업교과목</option><option>기타</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            className="bg-pink-400 text-white p-2 rounded-md shadow-sm hover:bg-pink-500 h-10"
-          >
-            추가
-          </button>
-        </form>
-        {/* 과목 테이블 */}
-        <div className="overflow-x-auto">
-=======
             <select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
               <option>전공필수</option><option>전공선택</option><option>교양</option><option>창업교과목</option><option>기타</option>
             </select>
@@ -211,7 +127,6 @@ const SummaryPage: React.FC = () => {
 
         {/* 👇 안전 장치 추가: courses가 배열일 때만 map 실행 */}
         <div className="overflow-x-auto border-t border-gray-200 pt-4">
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -223,27 +138,14 @@ const SummaryPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-<<<<<<< HEAD
-              {courses.length === 0 ? (
-=======
               {/* 👇 여기서 Array.isArray() 체크를 추가하여 에러를 방지합니다. */}
               {!Array.isArray(courses) || courses.length === 0 ? (
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
                 <tr>
                   <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
                     등록된 과목이 없습니다.
                   </td>
                 </tr>
               ) : (
-<<<<<<< HEAD
-                courses.map((course) => (
-                  <tr key={course.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{course.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{course.credits}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{course.grade}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{course.category}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-=======
                 courses.map((course, index) => (
                   <tr key={course.id || index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.name}</td>
@@ -251,7 +153,6 @@ const SummaryPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.grade}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.category}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
                       <button
                         onClick={() => handleDeleteCourse(course.id)}
                         className="text-red-500 hover:text-red-700 font-medium"

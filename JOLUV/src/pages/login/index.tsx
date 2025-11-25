@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { Link } from 'react-router-dom';
-import axios from 'axios';  // axios import
-=======
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
 
 const LoginPage: React.FC = () => {
   const [id, setId] = useState('');
@@ -14,25 +9,6 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-<<<<<<< HEAD
-    try {
-      const response = await axios.post('http://16.176.198.162:8080/', {
-        email,
-        password
-      });
-      console.log('로그인 성공:', response.data);
-      // 로그인 성공 후 처리 (예: 토큰 저장, 페이지 이동 등)
-    } catch (error) {
-      console.error('로그인 실패:', error);
-    }
-  };
-
-  
-
-  return (
-    <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-=======
 
     try {
       // 프록시 경로 사용 (/api/login)
@@ -69,7 +45,6 @@ const LoginPage: React.FC = () => {
         
         {/* 👇 1. KNU 로고 부분 삭제됨 */}
         
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">로그인</h1>
         
         <form onSubmit={handleSubmit}>
@@ -84,10 +59,6 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
           <div className="mb-6">
             <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">비밀번호</label>
             <input
@@ -99,22 +70,15 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
-<<<<<<< HEAD
-
-          <button
-            type="submit"
-            className="w-full bg-pink-400 text-white py-3 rounded-lg font-bold hover:bg-pink-600 transition duration-300"
-=======
           
           {/* 👇 2. 버튼 색상 변경 (blue -> pink) */}
           <button 
             type="submit" 
             className="w-full bg-pink-400 text-white py-3 rounded-lg font-bold hover:bg-pink-500 transition duration-300"
->>>>>>> 53e82f9c82f915b75d70dc12a1345c6a371ecae2
           >
             Log In
           </button>
-
+          
           <div className="text-center mt-6">
              <span className="text-gray-600">계정이 없으신가요? </span>
              <Link to="/signup" className="text-blue-600 font-semibold hover:underline">회원가입</Link>
