@@ -34,3 +34,27 @@
   gap: 64px;
   flex-wrap: wrap;
 }
+.metrics-panel {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.metric-box {
+  background: #fc0367;
+  border-radius: 12px;
+  padding: 18px 24px;
+  font-size: 18px;
+  text-align: center;
+  min-width: 180px;
+  box-shadow: 0 2px 8px #eed;
+  margin-right: 10px;
+}
+
+.header-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}

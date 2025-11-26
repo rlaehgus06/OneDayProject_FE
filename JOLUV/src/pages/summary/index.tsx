@@ -14,20 +14,6 @@ interface Course {
   score?: string;
 }
 
-const SAMPLE_COURSES: Course[] = [
-  { id: 1, name: '자료구조', credits: 3, category: '전공필수', grade: 2, semester: 1, score: 'A+' },
-  { id: 2, name: '객체지향프로그래밍', credits: 3, category: '전공필수', grade: 2, semester: 1, score: 'A+' },
-  { id: 3, name: '컴퓨터구조', credits: 3, category: '전공필수', grade: 2, semester: 2, score: 'A+' },
-  { id: 4, name: '운영체제', credits: 3, category: '전공필수', grade: 3, semester: 1, score: 'A+' },
-  { id: 5, name: '데이터베이스', credits: 3, category: '전공선택', grade: 3, semester: 1, score: 'A+' },
-  { id: 6, name: '알고리즘', credits: 3, category: '전공필수', grade: 3, semester: 2, score: 'A+' },
-  { id: 7, name: '소프트웨어공학', credits: 3, category: '전공선택', grade: 4, semester: 1, score: 'A+' },
-  { id: 8, name: '졸업프로젝트', credits: 3, category: '전공필수', grade: 4, semester: 2, score: 'A+' },
-  { id: 9, name: 'C프로그래밍', credits: 3, category: '전공기초', grade: 1, semester: 1, score: 'A+' },
-  { id: 10, name: '글쓰기', credits: 2, category: '교양필수', grade: 1, semester: 1, score: 'A+' },
-  { id: 11, name: '일반물리학', credits: 3, category: '교양필수', grade: 1, semester: 2, score: 'A+' },
-  { id: 12, name: '인공지능', credits: 3, category: '전공선택', grade: 3, semester: 1, score: 'A+' },
-];
 
 const ITEMS_PER_PAGE = 10;
 
@@ -45,47 +31,61 @@ const SummaryPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const fetchAllCourses = async () => {
-      try {
-        // 백엔드 연결 시도 (실패 시 샘플 데이터 사용)
-        // const response = await axios.get('/api/api/v1/courses/all');
-        // const initialized = response.data.map((c: any) => ({ ...c, score: 'A+', isAdded: false }));
-        // setAllCourses(initialized);
+    const fetchFilteredCourses = async () => {
+      if(selectedGrade !== 'all' && selectedSemester !== 'all') {
+        try {
+          const response = await axios.get('/api/lecture/standard', {
+            params: { 
+              grade: selectedGrade,
+              semester: selectedSemester
+            }
+          });
+          const fetchedCourses: Course[] = response.data.map((course: any) => ({
+            id: course.id,
+            name: course.name,
+            credits: course.credits,
+            category: course.category,
+            grade: selectedGrade ? parseInt(selectedGrade) : 0,
+            semester: selectedSemester ? parseInt(selectedSemester) : 0,
+            score: 'A+',
+            isAdded: false
+          }));
+        setSearchResults(fetchedCourses);
+
+
         
-        const initializedCourses = SAMPLE_COURSES.map(c => ({ ...c, score: 'A+', isAdded: false }));
-        setAllCourses(initializedCourses);
-      } catch (error) {
-        console.error('데이터 로드 실패:', error);
-        const initializedCourses = SAMPLE_COURSES.map(c => ({ ...c, score: 'A+', isAdded: false }));
-        setAllCourses(initializedCourses);
+        }catch (error) {
+          console.error('과목 불러오기 실패:', error);
+
+          const filtered = allCourses.filter(course =>
+            course.grade === parseInt(selectedGrade) &&
+            course.semester === parseInt(selectedSemester)
+          );
+          setSearchResults(filtered);
+        }
       }
+    
+    else
+    {
+      let filitered = allCourses;
+
+      if(selectedGrade !== 'all') {
+        filitered = filitered.filter(course => course.grade === parseInt(selectedGrade));
+      }
+      if (searchTerm.trim() !== '') {
+        filitered = filitered.filter(course =>
+          course.name.includes(searchTerm.trim())
+        );
+      }
+      setSearchResults(filitered);
+
+    }
     };
-    fetchAllCourses();
-  }, []);
+    fetchFilteredCourses();
 
-  // 필터링 로직
-  useEffect(() => {
-    let filtered = allCourses;
-
-    if (selectedGrade !== 'all') {
-      filtered = filtered.filter(course => course.grade === parseInt(selectedGrade));
-    }
-
-    if (selectedGrade !== 'all' && selectedSemester !== 'all') {
-      filtered = filtered.filter(course => course.semester === parseInt(selectedSemester));
-    }
-
-    if (searchTerm.trim() !== '') {
-      filtered = filtered.filter(course => 
-        course.name.includes(searchTerm.trim())
-      );
-    }
-
-    setSearchResults(filtered);
     setCurrentPage(1); // 필터 변경 시 1페이지로 이동
-  }, [selectedGrade, selectedSemester, searchTerm, allCourses]);
+  }, [selectedGrade, selectedSemester,searchTerm, allCourses]);
 
-  // 핸들러 함수들
   const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGrade = e.target.value;
     setSelectedGrade(newGrade);

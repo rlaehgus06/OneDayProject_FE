@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import SubjectCard from './components/SubjectCard';
 import type { Subject, SortType, Semester } from './types';
-import { Link } from 'react-router-dom';
 
 import './index.css';
 
