@@ -1,32 +1,32 @@
-// src/App.tsx
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout.tsx'; // 👈 1. Layout을 import
-import MainPage from './pages/main/Mainpage.tsx';
-import LoginPage from './pages/login/index.tsx';
-import SignupPage from './pages/login/signup.tsx';
-import ChecklistPage from './pages/checklist/index.tsx';
-import SummaryPage from './pages/summary/index.tsx';
-import ScoreManagementPage from './pages/score_management/index.tsx';
-import MyPage from './pages/mypage/MyPage.tsx';
+import Layout from './components/Layout';
+import MainPage from './pages/main/Mainpage';
+import LoginPage from './pages/login/index';
+import SignupPage from './pages/login/signup';
+import SummaryPage from './pages/summary/index'; 
+import ChecklistPage from './pages/checklist/index'; 
+import { AuthProvider } from './contexts/AuthContext'; 
+import MyPage from './pages/mypage/MyPage';
 
 function App() {
   return (
-    <Routes>
-      {/* 2. Layout 컴포넌트가 모든 자식 경로를 감싸도록 설정 */}
-      <Route path="/" element={<Layout />}>
-        {/* 👇 여기에 있는 페이지들은 모두 Header를 갖게 됩니다. */}
-        <Route index element={<MainPage />} /> {/* 👈 path="/"와 동일 */}
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
-        <Route path="checklist" element={<ChecklistPage />} />
-        <Route path="summary" element={<SummaryPage />} />
-        <Route path="score-management" element={<ScoreManagementPage />} />
-        <Route path="mypage" element={<MyPage />} />  
-        {/* (다른 페이지 경로들도 여기에 추가) */}
-      </Route>
-    </Routes>
+    <AuthProvider> 
+      <Routes>
+        {/* 👇 모든 페이지를 Layout 안으로 이동시켜 헤더가 보이게 함 */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<MainPage />} />
+          <Route path="mypage" element={<MyPage />} />
+          <Route path="summary" element={<SummaryPage />} />
+          <Route path="checklist" element={<ChecklistPage />} />
+          <Route path="score-management" element={<SummaryPage />} /> 
+          
+          {/* 👇 로그인과 회원가입도 Layout 안으로 이동 */}
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
