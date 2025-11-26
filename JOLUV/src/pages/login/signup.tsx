@@ -5,7 +5,6 @@ import axios from 'axios';
 const SignupPage: React.FC = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  // ❌ passwordConfirm 상태 삭제됨
   const [name, setName] = useState('');
   const [studentId, setStudentId] = useState('');
   const [major, setMajor] = useState('');
@@ -15,14 +14,18 @@ const SignupPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ❌ 비밀번호 일치 확인 로직 삭제됨
+    // 전공 선택 여부 확인
+    if (!major) {
+      alert('전공을 선택해주세요.');
+      return;
+    }
 
     try {
       const response = await axios.post('/api/signup', {
         userId: id,
         password: password,
         name: name,
-        StudentId: studentId,
+        studentId: studentId,
         major: major,
       });
 
@@ -42,6 +45,7 @@ const SignupPage: React.FC = () => {
   };
 
   return (
+    // 👇 1. 배경색 변경: bg-gray-100 -> bg-white
     <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-8">
         
@@ -84,8 +88,6 @@ const SignupPage: React.FC = () => {
               />
             </div>
 
-            {/* ❌ 비밀번호 확인 입력창 삭제됨 */}
-
             {/* 3. 이름 */}
             <div>
               <label htmlFor="name" className="sr-only">이름</label>
@@ -119,16 +121,21 @@ const SignupPage: React.FC = () => {
             {/* 5. 전공 */}
             <div>
               <label htmlFor="major" className="sr-only">전공</label>
-              <input
+              <select
                 id="major"
                 name="major"
-                type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm"
-                placeholder="전공 (예: 컴퓨터학부)"
+                // 👇 2. 드롭다운 배경색도 bg-white로 명시
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm bg-white"
                 value={major}
                 onChange={(e) => setMajor(e.target.value)}
-              />
+              >
+                <option value="" disabled className="bg-white">전공을 선택하세요</option>
+                <option value="플랫폼SW" className="bg-white">플랫폼SW융합전공</option>
+                <option value="글로벌 SW" className="bg-white">글로벌SW융합전공</option>
+                <option value="인공지능" className="bg-white">인공지능컴퓨팅전공</option>
+                <option value="심화컴퓨터" className="bg-white">심화컴퓨팅전공</option>
+              </select>
             </div>
 
           </div>
