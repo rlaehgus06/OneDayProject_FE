@@ -10,7 +10,7 @@ export default defineConfig({
       '/api': {
         target: 'http://16.176.198.162:8080', // 백엔드 주소
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // '/api' 글자를 지우고 보냄
+        //rewrite: (path) => path.replace(/^\/api/, ''), // '/api' 글자를 지우고 보냄
         secure: false,
       },
     },

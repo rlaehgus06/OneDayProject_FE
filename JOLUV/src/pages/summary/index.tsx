@@ -19,7 +19,7 @@ const ITEMS_PER_PAGE = 10;
 
 const SummaryPage: React.FC = () => {
   const [allCourses, setAllCourses] = useState<Course[]>([]);
-  
+  const [fetchedCourses, setFetchedCourses] = useState<Course[]>([]);
   // 필터 상태
   const [selectedGrade, setSelectedGrade] = useState('all');    
   const [selectedSemester, setSelectedSemester] = useState('all'); 
@@ -30,61 +30,49 @@ const SummaryPage: React.FC = () => {
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchFilteredCourses = async () => {
-      if(selectedGrade !== 'all' && selectedSemester !== 'all') {
-        try {
-          const response = await axios.get('/api/lecture/standard', {
-            params: { 
-              grade: selectedGrade,
-              semester: selectedSemester
-            }
-          });
-          const fetchedCourses: Course[] = response.data.map((course: any) => ({
-            id: course.id,
-            name: course.name,
-            credits: course.credits,
-            category: course.category,
-            grade: selectedGrade ? parseInt(selectedGrade) : 0,
-            semester: selectedSemester ? parseInt(selectedSemester) : 0,
-            score: 'A+',
-            isAdded: false
-          }));
-        setSearchResults(fetchedCourses);
 
+
+  useEffect(() => {
+  const fetchFilteredCourses = async () => {
+    // grade/semester가 모두 선택된 경우에만 fetch
+    if(selectedGrade !== 'all' && selectedSemester !== 'all') {
+      try {
+        const response = await axios.get('/api/lecture/standard', {
+          params: { 
+            grade: selectedGrade,
+            semester: selectedSemester
+            
+          }
+        });
+        console.log(response.data);
+        const fetchedCourses: Course[] = response.data.map((course: any, idx: number) => ({
+        id: idx, // 또는 course.lecid 등
+        name: course.lectureName,
+        credits: course.credit,
+        category: course.lectureType,
+        grade: selectedGrade ? parseInt(selectedGrade) : 0,
+        semester: selectedSemester ? parseInt(selectedSemester) : 0,
+        score: 'A+',
+        isAdded: false,
+      }));
+      setSearchResults(fetchedCourses);
 
         
-        }catch (error) {
-          console.error('과목 불러오기 실패:', error);
-
-          const filtered = allCourses.filter(course =>
-            course.grade === parseInt(selectedGrade) &&
-            course.semester === parseInt(selectedSemester)
-          );
-          setSearchResults(filtered);
-        }
+        
+      } catch (error) {
+        console.error('과목 불러오기 실패:', error);
+        
+        setSearchResults([]);
       }
-    
-    else
-    {
-      let filitered = allCourses;
-
-      if(selectedGrade !== 'all') {
-        filitered = filitered.filter(course => course.grade === parseInt(selectedGrade));
-      }
-      if (searchTerm.trim() !== '') {
-        filitered = filitered.filter(course =>
-          course.name.includes(searchTerm.trim())
-        );
-      }
-      setSearchResults(filitered);
-
+    } else {
+      // 조건을 선택하지 않았으면 아무것도 표시하지 않거나 안내 메시지
+      setSearchResults([]);
     }
-    };
-    fetchFilteredCourses();
+    setCurrentPage(1);
+  };
+  fetchFilteredCourses();
+}, [selectedGrade, selectedSemester, searchTerm]);
 
-    setCurrentPage(1); // 필터 변경 시 1페이지로 이동
-  }, [selectedGrade, selectedSemester,searchTerm, allCourses]);
 
   const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGrade = e.target.value;
@@ -93,28 +81,36 @@ const SummaryPage: React.FC = () => {
   };
 
   const handleCategoryChange = (id: number, newCategory: string) => {
-    setAllCourses(prev => prev.map(course => 
+  setSearchResults(prev =>
+    prev.map(course =>
       course.id === id ? { ...course, category: newCategory } : course
-    ));
-  };
+    )
+  );
+};
 
-  const handleScoreChange = (id: number, newScore: string) => {
-    setAllCourses(prev => prev.map(course => 
+const handleScoreChange = (id: number, newScore: string) => {
+  setSearchResults(prev =>
+    prev.map(course =>
       course.id === id ? { ...course, score: newScore } : course
-    ));
-  };
+    )
+  );
+};
 
-  const handleAddMyCourse = (id: number) => {
-    setAllCourses(prev => prev.map(course => 
+const handleAddMyCourse = (id: number) => {
+  setSearchResults(prev =>
+    prev.map(course =>
       course.id === id ? { ...course, isAdded: true } : course
-    ));
-  };
+    )
+  );
+};
 
-  const handleRemoveMyCourse = (id: number) => {
-    setAllCourses(prev => prev.map(course => 
+const handleRemoveMyCourse = (id: number) => {
+  setSearchResults(prev =>
+    prev.map(course =>
       course.id === id ? { ...course, isAdded: false } : course
-    ));
-  };
+    )
+  );
+};
 
   // 내가 수강한 과목 리스트
   const myAddedCourses = allCourses.filter(course => course.isAdded);
@@ -173,7 +169,9 @@ const SummaryPage: React.FC = () => {
               >
                 <option value="all">전체 학기</option>
                 <option value="1">1학기</option>
-                <option value="2">2학기</option>
+                <option value="2">여름학기</option>
+                <option value="3">2학기</option>
+                <option value="4">겨울학기</option>
               </select>
             </div>
           )}
