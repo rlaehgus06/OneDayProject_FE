@@ -17,11 +17,11 @@ export default function ScoreManagementPage() {
       </div>
       {/* 아래 박스형 Builtin (파란 테두리 그대로) */}
       <div className="score-management-container max-w-[1360px] mx-auto mt-14">
-        <div className="border-2 border-pink-400 rounded-xl p-8 bg-white">
+        <div className="border-2 border-#333 rounded-xl p-8 bg-white">
           <Builtin />
         </div>
       </div>
-    </div>
-  );
+    </div>
+  );
 }
 

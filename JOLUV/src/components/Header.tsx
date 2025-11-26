@@ -32,7 +32,7 @@ const Header: React.FC = () => {
           졸업요건 CheckList
         </Link>
         <Link to="/summary" className="text-gray-700 font-semibold hover:text-blue-600 transition">
-          학점관리
+          학점기록
         </Link>
 
         <Link to="/login" className="text-gray-700 font-semibold hover:text-blue-600 transition">
