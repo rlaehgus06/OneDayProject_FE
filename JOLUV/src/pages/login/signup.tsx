@@ -118,6 +118,25 @@ const SignupPage: React.FC = () => {
               />
             </div>
 
+            {/* 5. 전공 */}
+            <div>
+              <label htmlFor="major" className="sr-only">전공</label>
+              <select
+                id="major"
+                name="major"
+                required
+                // 👇 2. 드롭다운 배경색도 bg-white로 명시
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm bg-white"
+                value={major}
+                onChange={(e) => setMajor(e.target.value)}
+              >
+                <option value="" disabled className="bg-white">전공을 선택하세요</option>
+                <option value="플랫폼SW" className="bg-white">플랫폼SW융합전공</option>
+                <option value="글로벌 SW" className="bg-white">글로벌SW융합전공</option>
+                <option value="인공지능" className="bg-white">인공지능컴퓨팅전공</option>
+                <option value="심화컴퓨터" className="bg-white">심화컴퓨팅전공</option>
+              </select>
+            </div>
 
           </div>
 

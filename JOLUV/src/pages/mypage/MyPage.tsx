@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './MyPage.css';
 
+// 사용자 정보 타입 정의
+interface UserInfo {
+  name: string;      // 여기에 username을 넣을 예정
+  major: string;
+  track: string;
+  profileImage?: string;
+}
+
+// (기타 인터페이스 및 더미 데이터 생략 - 기존과 동일하게 유지)
 interface ChecklistItem {
   title: string;
   progress: number;
@@ -27,14 +37,50 @@ const initialCareers: CareerItem[] = [
 ];
 
 const MyPage: React.FC = () => {
+  const [user, setUser] = useState<UserInfo | null>(null);
   const [careers, setCareers] = useState<CareerItem[]>(initialCareers);
   const [form, setForm] = useState<CareerItem>({
-    type: '대회',
-    title: '',
-    sub: '',
-    year: ''
+    type: '대회', title: '', sub: '', year: ''
   });
 
+  // 👇 페이지가 열리자마자 실행되는 부분
+  useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        // 1. 해당 주소로 GET 요청을 보냅니다.
+        // (vite.config.ts에 프록시가 설정되어 있다면 '/api/auth/mypage'만 써도 됩니다)
+        const response = await axios.get('/api/auth/mypage', {
+           // 혹시 토큰이 필요한 경우를 대비해 헤더를 남겨둡니다. 필요 없으면 headers 부분을 지우셔도 됩니다.
+           headers: {
+             Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+           }
+        });
+        
+        console.log('데이터 가져오기 성공:', response.data);
+
+        // 2. 받아온 데이터에서 'username'을 꺼내서 설정합니다.
+        setUser({
+          name: response.data.username || '이름 없음', // username을 name 자리에 표시
+          major: '컴퓨터학부 SW글로벌 융합전공',       // 나머지는 고정값 (또는 받아온 값)
+          track: '다중전공트랙',
+          profileImage: ''
+        });
+
+      } catch (error) {
+        console.error('데이터 가져오기 실패:', error);
+        // 실패 시 기본값 보여주기 (테스트용)
+        setUser({
+          name: 'JOLUV (오프라인)',
+          major: '컴퓨터학부 SW글로벌 융합전공',
+          track: '다중전공트랙',
+        });
+      }
+    };
+
+    fetchUsername();
+  }, []);
+
+  // (이하 기존 코드와 동일)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
@@ -54,9 +100,12 @@ const MyPage: React.FC = () => {
         <header className="mypage__header">
           <div className="profile__img" />
           <div>
-            <h1 className="user__name">JOLUV 님</h1>
-            <p className="user__info">컴퓨터학부 SW글로벌 융합전공</p>
-            <p className="user__track">세부 트랙: <span>다중전공트랙</span></p>
+            {/* 👇 받아온 username이 여기에 표시됩니다 */}
+            <h1 className="user__name">
+              {user ? `${user.name} 님` : '로딩 중...'}
+            </h1>
+            <p className="user__info">{user?.major}</p>
+            <p className="user__track">세부 트랙: <span>{user?.track}</span></p>
           </div>
         </header>
         <section className="mypage__checklist">
@@ -86,7 +135,6 @@ const MyPage: React.FC = () => {
       <div className="mypage__container box__right">
         <section className="career__section">
           <h2>경력 및 활동</h2>
-          {/* 경력 리스트 */}
           <div className="career__list">
             {careers.map((career, idx) => (
               <div className="career__item" key={career.title + career.year + idx}>
@@ -101,7 +149,6 @@ const MyPage: React.FC = () => {
               </div>
             ))}
           </div>
-          {/* 경력 추가 폼 */}
           <form className="career__form" onSubmit={handleAddCareer}>
             <div className="career__form-row">
               <select name="type" value={form.type} onChange={handleChange}>
