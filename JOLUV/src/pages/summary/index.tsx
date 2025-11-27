@@ -5,6 +5,7 @@ import EachCredits from '../../components/displayCredits/eachCredits';
 
 interface Course {
   id: number;
+  lecid: string; // 과목코드 (고유값)
   name: string;
   credits: number;
   category: string;
@@ -14,65 +15,87 @@ interface Course {
   score?: string;
 }
 
-
 const ITEMS_PER_PAGE = 10;
 
+// 성적 변환 함수
+const getScoreValue = (score: string = 'A+'): number => {
+  const scoreMap: { [key: string]: number } = {
+    'A+': 4.5, 'A0': 4.0,
+    'B+': 3.5, 'B0': 3.0,
+    'C+': 2.5, 'C0': 2.0,
+    'D+': 1.5, 'D0': 1.0,
+    'F': 0.0, 'P': 0.0, 'NP': 0.0
+  };
+  return scoreMap[score] || 0.0;
+};
+
 const SummaryPage: React.FC = () => {
-  const [allCourses, setAllCourses] = useState<Course[]>([]);
-  const [fetchedCourses, setFetchedCourses] = useState<Course[]>([]);
+  const [myCourses, setMyCourses] = useState<Course[]>([]);
+  
   // 필터 상태
   const [selectedGrade, setSelectedGrade] = useState('all');    
   const [selectedSemester, setSelectedSemester] = useState('all'); 
   const [searchTerm, setSearchTerm] = useState('');
   
+  // 검색 결과 상태
   const [searchResults, setSearchResults] = useState<Course[]>([]);
   
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
 
-
-
+  // 1. 데이터 조회 (검색 조건 변경 시 실행)
   useEffect(() => {
-  const fetchFilteredCourses = async () => {
-    // grade/semester가 모두 선택된 경우에만 fetch
-    if(selectedGrade !== 'all' && selectedSemester !== 'all') {
-      try {
-        const response = await axios.get('/api/lecture/standard', {
-          params: { 
-            grade: selectedGrade,
-            semester: selectedSemester
-            
-          }
-        });
-        console.log(response.data);
-        const fetchedCourses: Course[] = response.data.map((course: any, idx: number) => ({
-        id: idx, // 또는 course.lecid 등
-        name: course.lectureName,
-        credits: course.credit,
-        category: course.lectureType,
-        grade: selectedGrade ? parseInt(selectedGrade) : 0,
-        semester: selectedSemester ? parseInt(selectedSemester) : 0,
-        score: 'A+',
-        isAdded: false,
-      }));
-      setSearchResults(fetchedCourses);
+    const fetchFilteredCourses = async () => {
+      if(selectedGrade !== 'all' && selectedSemester !== 'all') {
+        try {
+          const response = await axios.get('/api/lecture/standard', {
+            params: { 
+              grade: selectedGrade,
+              semester: selectedSemester
+            }
+          });
+          
+          const newSearchResults: Course[] = response.data.map((course: any, idx: number) => {
+            // API 응답에서 과목코드 필드 찾기 (lecId, lecid, lectureCode 등)
+            const realLecId = course.lecId || course.lecid || course.lectureCode || String(idx);
 
-        
-        
-      } catch (error) {
-        console.error('과목 불러오기 실패:', error);
-        
+            return {
+              id: idx, 
+              lecid : realLecId, 
+              name: course.lectureName,
+              credits: course.credit,
+              category: course.lectureType,
+              grade: selectedGrade ? parseInt(selectedGrade) : 0,
+              semester: selectedSemester ? parseInt(selectedSemester) : 0,
+              score: 'A+',
+              isAdded: false // 일단 false로 초기화 (아래 useEffect에서 동기화)
+            };
+          });
+          
+          setSearchResults(newSearchResults);
+
+        } catch (error) {
+          console.error('과목 불러오기 실패:', error);
+          setSearchResults([]);
+        }
+      } else {
         setSearchResults([]);
       }
-    } else {
-      // 조건을 선택하지 않았으면 아무것도 표시하지 않거나 안내 메시지
-      setSearchResults([]);
-    }
-    setCurrentPage(1);
-  };
-  fetchFilteredCourses();
-}, [selectedGrade, selectedSemester, searchTerm]);
+      setCurrentPage(1);
+    };
 
+    fetchFilteredCourses();
+  }, [selectedGrade, selectedSemester, searchTerm]); 
+
+  // 2. 버튼 상태 동기화
+  useEffect(() => {
+    setSearchResults(prevResults => 
+      prevResults.map(searchItem => {
+        const isAdded = myCourses.some(my => my.lecid === searchItem.lecid);
+        return { ...searchItem, isAdded };
+      })
+    );
+  }, [myCourses]);
 
   const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGrade = e.target.value;
@@ -80,42 +103,115 @@ const SummaryPage: React.FC = () => {
     if (newGrade === 'all') setSelectedSemester('all');
   };
 
-  const handleCategoryChange = (id: number, newCategory: string) => {
-  setSearchResults(prev =>
-    prev.map(course =>
-      course.id === id ? { ...course, category: newCategory } : course
-    )
-  );
-};
+  // 정보 업데이트 API 호출 함수
+  const updateCourseInfo = async (lecid: string, lectype: string, score: string) => {
+    const payload = {
+      lecid: lecid,                     
+      lectype: lectype,                 
+      received_grade: getScoreValue(score) 
+    };
 
-const handleScoreChange = (id: number, newScore: string) => {
-  setSearchResults(prev =>
-    prev.map(course =>
-      course.id === id ? { ...course, score: newScore } : course
-    )
-  );
-};
+    try {
+      console.log("정보 수정 요청:", payload);
+      await axios.post('/api/course/update', payload);
+      console.log("정보 수정 성공");
+    } catch (error) {
+      console.error("정보 수정 실패:", error);
+    }
+  };
 
-const handleAddMyCourse = (id: number) => {
-  setSearchResults(prev =>
-    prev.map(course =>
-      course.id === id ? { ...course, isAdded: true } : course
-    )
-  );
-};
+  // 상단 리스트 이수구분 변경 (즉시 업데이트)
+  const handleMyCourseCategoryChange = (id: number, newCategory: string) => {
+    setMyCourses(prev => prev.map(c => c.id === id ? { ...c, category: newCategory } : c));
+    const target = myCourses.find(c => c.id === id);
+    if (target) {
+      updateCourseInfo(target.lecid, newCategory, target.score || 'A+');
+    }
+  };
 
-const handleRemoveMyCourse = (id: number) => {
-  setSearchResults(prev =>
-    prev.map(course =>
-      course.id === id ? { ...course, isAdded: false } : course
-    )
-  );
-};
+  // 상단 리스트 성적 변경 (즉시 업데이트)
+  const handleMyCourseScoreChange = (id: number, newScore: string) => {
+    setMyCourses(prev => prev.map(c => c.id === id ? { ...c, score: newScore } : c));
+    const target = myCourses.find(c => c.id === id);
+    if (target) {
+      updateCourseInfo(target.lecid, target.category, newScore);
+    }
+  };
 
-  // 내가 수강한 과목 리스트
-  const myAddedCourses = allCourses.filter(course => course.isAdded);
+  // 하단 검색 리스트 핸들러
+  const handleSearchCategoryChange = (id: number, newCategory: string) => {
+    setSearchResults(prev =>
+      prev.map(course => course.id === id ? { ...course, category: newCategory } : course)
+    );
+  };
+  const handleSearchScoreChange = (id: number, newScore: string) => {
+    setSearchResults(prev =>
+      prev.map(course => course.id === id ? { ...course, score: newScore } : course)
+    );
+  };
 
-  // 페이지네이션 계산
+  // 추가 버튼 로직
+  const handleAddMyCourse = async (id: number) => {
+    const targetCourse = searchResults.find(c => c.id === id);
+    if (!targetCourse) return;
+
+    const payload = {
+      lecId: targetCourse.lecid,
+      grade: Number(targetCourse.grade),
+      semester: Number(targetCourse.semester),
+      lecType: targetCourse.category,
+      credit: Number(targetCourse.credits),
+      received_grade: getScoreValue(targetCourse.score)
+    };
+
+    try {
+      await axios.post('/api/course/register', payload); 
+
+      setMyCourses(prev => {
+        if (prev.find(c => c.lecid === targetCourse.lecid)) return prev;
+        return [...prev, { ...targetCourse, isAdded: true }];
+      });
+      
+      setSearchResults(prev =>
+        prev.map(course =>
+          course.id === id ? { ...course, isAdded: true } : course
+        )
+      );
+
+    } catch (error) {
+      console.error("강의 추가 실패:", error);
+      alert("오류가 발생했습니다.");
+    }
+  };
+
+  // [수정된 부분] 삭제 버튼 로직: DELETE 요청 전송
+  const handleRemoveMyCourse = async (id: number) => {
+    // 삭제할 과목 찾기
+    const target = myCourses.find(c => c.id === id);
+    if (!target) return;
+
+    try {
+      // 1. 백엔드로 삭제 요청 전송 (URL에 lecid 포함)
+      await axios.delete(`/api/course/${target.lecid}`);
+      console.log(`삭제 성공: ${target.lecid}`);
+
+      // 2. 성공 시 화면(State) 업데이트
+      setMyCourses(prev => prev.filter(course => course.id !== id));
+      
+      // 3. 검색 결과 리스트의 버튼 상태 복구 ('추가 완료' -> '추가')
+      setSearchResults(prev =>
+        prev.map(course =>
+          course.lecid === target.lecid ? { ...course, isAdded: false } : course
+        )
+      );
+
+    } catch (error) {
+      console.error("삭제 실패:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 페이지네이션 로직
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentItems = searchResults.slice(indexOfFirstItem, indexOfLastItem);
@@ -191,15 +287,15 @@ const handleRemoveMyCourse = (id: number) => {
           </div>
         </div>
 
-        {/* 내가 수강한 과목 리스트 (상단) */}
-        {myAddedCourses.length > 0 && (
+        {/* 상단 리스트 (내 수강 과목) */}
+        {myCourses.length > 0 && (
           <div className="mb-8 border-2 border-pink-100 bg-pink-50 rounded-xl p-4">
             <div className="flex justify-between items-center mb-4 px-2">
               <h3 className="text-lg font-bold text-pink-600">
-                📚 내가 수강한 과목 <span className="text-sm font-normal text-gray-600">({myAddedCourses.length}개)</span>
+                📚 내가 수강한 과목 <span className="text-sm font-normal text-gray-600">({myCourses.length}개)</span>
               </h3>
               <span className="text-sm font-bold text-pink-600">
-                총 {myAddedCourses.reduce((acc, cur) => acc + cur.credits, 0)}학점
+                총 {myCourses.reduce((acc, cur) => acc + cur.credits, 0)}학점
               </span>
             </div>
             
@@ -208,6 +304,7 @@ const handleRemoveMyCourse = (id: number) => {
                 <thead className="bg-pink-100">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-bold text-pink-800 uppercase w-1/5">과목명</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-pink-800 uppercase w-1/5">과목코드</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-pink-800 uppercase w-1/5">이수구분</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-pink-800 uppercase w-1/5">학점</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-pink-800 uppercase w-1/5">성적</th>
@@ -215,16 +312,18 @@ const handleRemoveMyCourse = (id: number) => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-pink-100">
-                  {myAddedCourses.map((course) => (
+                  {myCourses.map((course) => (
                     <tr key={course.id} className="hover:bg-pink-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                         {course.name}
                       </td>
-                      {/* 이수구분 수정 가능 */}
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                        {course.lecid}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <select
                           value={course.category}
-                          onChange={(e) => handleCategoryChange(course.id, e.target.value)}
+                          onChange={(e) => handleMyCourseCategoryChange(course.id, e.target.value)}
                           className="text-sm border border-pink-200 rounded p-1 focus:ring-pink-400 focus:border-pink-400 bg-white text-gray-700 cursor-pointer"
                         >
                           <option>전공필수</option>
@@ -239,7 +338,23 @@ const handleRemoveMyCourse = (id: number) => {
                         {course.credits}학점
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-bold">
-                        {course.score}
+                        <select
+                            value={course.score || 'A+'}
+                            onChange={(e) => handleMyCourseScoreChange(course.id, e.target.value)}
+                            className="text-sm border border-pink-200 rounded p-1 focus:ring-pink-400 focus:border-pink-400 bg-white text-gray-700 cursor-pointer"
+                        >
+                            <option>A+</option>
+                            <option>A0</option>
+                            <option>B+</option>
+                            <option>B0</option>
+                            <option>C+</option>
+                            <option>C0</option>
+                            <option>D+</option>
+                            <option>D0</option>
+                            <option>F</option>
+                            <option>P</option>
+                            <option>NP</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <button 
@@ -268,6 +383,7 @@ const handleRemoveMyCourse = (id: number) => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/6">학년/학기</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/6">과목코드</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/6">과목명</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/6">이수구분</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/6">학점</th>
@@ -276,11 +392,13 @@ const handleRemoveMyCourse = (id: number) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {/* 데이터 행 */}
                 {currentItems.map((course) => (
                   <tr key={course.id} className="hover:bg-gray-50 h-16 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {course.grade}학년 {course.semester}학기
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                      {course.lecid}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                       {course.name}
@@ -288,7 +406,7 @@ const handleRemoveMyCourse = (id: number) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={course.category}
-                        onChange={(e) => handleCategoryChange(course.id, e.target.value)}
+                        onChange={(e) => handleSearchCategoryChange(course.id, e.target.value)}
                         className="text-sm border border-gray-300 rounded p-1 focus:ring-pink-400 focus:border-pink-400"
                       >
                         <option>전공필수</option>
@@ -311,7 +429,7 @@ const handleRemoveMyCourse = (id: number) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={course.score || 'A+'}
-                        onChange={(e) => handleScoreChange(course.id, e.target.value)}
+                        onChange={(e) => handleSearchScoreChange(course.id, e.target.value)}
                         className="text-sm border border-gray-300 rounded p-1 focus:ring-pink-400 focus:border-pink-400 font-medium text-gray-700"
                       >
                         <option>A+</option>
@@ -343,22 +461,21 @@ const handleRemoveMyCourse = (id: number) => {
                     </td>
                   </tr>
                 ))}
-
-                {/* 빈 행 채우기 (높이 고정) */}
+                
                 {Array.from({ length: emptyRows }).map((_, index) => (
                   <tr key={`empty-${index}`} className="h-16 border-b border-gray-50">
-                    <td colSpan={6}></td>
+                    <td colSpan={7}></td>
                   </tr>
                 ))}
 
-                {/* 데이터 없을 때 메시지 */}
                 {searchResults.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-gray-500 h-64">
+                    <td colSpan={7} className="px-6 py-10 text-center text-gray-500 h-64">
                       조건에 맞는 개설 강좌가 없습니다.
                     </td>
                   </tr>
                 )}
+
               </tbody>
             </table>
           </div>
