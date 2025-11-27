@@ -29,7 +29,7 @@ const Header: React.FC = () => {
           수강과목정리
         </Link>
         <Link to="/checklist" className="text-gray-700 font-semibold hover:text-blue-600 transition">
-          졸업요건 CheckList
+          졸업요건 Check
         </Link>
         <Link to="/summary" className="text-gray-700 font-semibold hover:text-blue-600 transition">
           학점관리
