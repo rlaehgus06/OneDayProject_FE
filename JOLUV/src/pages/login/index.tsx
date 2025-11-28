@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
 
                 alert("Login 성공");
                 login(id); // Context 상태 업데이트
-                //navigate("/mypage");
+                navigate("/");
             }
 
         } catch (error: any) {

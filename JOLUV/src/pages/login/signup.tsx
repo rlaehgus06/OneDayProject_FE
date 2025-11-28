@@ -20,24 +20,58 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    // 1. JSON 데이터 객체 생성
+    // (@RequestBody는 JSON 형식을 받습니다)
+    const signupData = {
+      userId: id,
+      password: password, // 혹시 또 'rawPassword cannot be null' 에러가 나면 키 이름을 'rawPassword'로 바꿔주세요.
+      name: name,
+      studentId: parseInt(studentId) || 0, // 백엔드 타입(Long/Int)에 맞춰 숫자로 변환
+      major: major,
+    };
+
     try {
-      const response = await axios.post('/api/auth/signup', {
-        userId: id,
-        password: password,
-        name: name,
-        studentId: studentId,
-        major: major,
+      // 2. axios.post 요청 (기본적으로 JSON으로 전송됨)
+      const response = await axios.post('/api/auth/signup', signupData, {
+        headers: {
+            'Content-Type': 'application/json' // 명시적으로 JSON 설정
+        }
       });
 
-      console.log('회원가입 성공:', response.data);
-      alert('회원가입이 완료되었습니다! 로그인해주세요.');
-      navigate('/login');
+      console.log('회원가입 응답:', response);
 
-    } catch (error) {
+      // 3. 성공 처리
+      // 백엔드가 리다이렉트 문자열("redirect:...")을 리턴하더라도,
+      // Axios가 이를 따라가서 최종적으로 200 OK를 받으면 성공으로 처리합니다.
+      if (response.status === 200) {
+        alert('회원가입이 완료되었습니다! 로그인해주세요.');
+        navigate('/login'); 
+      }
+
+    } catch (error: any) {
       console.error('회원가입 실패:', error);
+      
+      let errorMessage = '회원가입 중 오류가 발생했습니다.';
+      
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
-        alert(`회원가입 실패: ${errorMessage}`);
+        // 에러 응답 데이터 처리
+        const errorData = error.response?.data;
+        
+        if (typeof errorData === 'string') {
+             // HTML 에러 페이지가 올 경우를 대비해 메시지 필터링
+             if (!errorData.includes('<html')) {
+                 errorMessage = errorData;
+             }
+        } else if (errorData?.message) {
+            errorMessage = errorData.message;
+        }
+
+        // 409 Conflict (중복 등)
+        if (error.response?.status === 409) {
+             alert(`가입 실패: ${errorMessage}`);
+        } else {
+             alert(`회원가입 실패: ${errorMessage}`);
+        }
       } else {
         alert('서버와 연결할 수 없습니다.');
       }
@@ -45,9 +79,8 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    // 👇 1. 배경색 변경: bg-gray-100 -> bg-white
-    <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-8">
+    <div className="bg-white min-h-screen font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-8 border border-gray-200">
         
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
@@ -125,16 +158,15 @@ const SignupPage: React.FC = () => {
                 id="major"
                 name="major"
                 required
-                // 👇 2. 드롭다운 배경색도 bg-white로 명시
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm bg-white"
                 value={major}
                 onChange={(e) => setMajor(e.target.value)}
               >
-                <option value="" disabled className="bg-white">전공을 선택하세요</option>
-                <option value="플랫폼SW" className="bg-white">플랫폼SW융합전공</option>
-                <option value="글로벌 SW" className="bg-white">글로벌SW융합전공</option>
-                <option value="인공지능" className="bg-white">인공지능컴퓨팅전공</option>
-                <option value="심화컴퓨터" className="bg-white">심화컴퓨팅전공</option>
+                <option value="" disabled>전공을 선택하세요</option>
+                <option value="플랫폼SW융합전공">플랫폼SW융합전공</option>
+                <option value="글로벌SW융합전공">글로벌SW융합전공</option>
+                <option value="인공지능컴퓨팅전공">인공지능컴퓨팅전공</option>
+                <option value="심화컴퓨팅전공">심화컴퓨팅전공</option>
               </select>
             </div>
 
