@@ -1,39 +1,57 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-// 👇 ReactNode는 타입이므로 'import type'을 사용합니다.
-import type { ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
+// Context에서 관리할 데이터 타입 정의
 interface AuthContextType {
   isLoggedIn: boolean;
-  login: () => void;
+  userId: string | null;
+  login: (id: string) => void;
   logout: () => void;
 }
 
+// Context 생성
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Provider 컴포넌트 (App.tsx에서 전체를 감싸야 함)
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // 앱 시작 시 로컬 스토리지 확인 (로그인 유지)
+  // 앱 실행 시 localStorage 확인하여 로그인 상태 복구
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
+    const storedLogin = localStorage.getItem("isLoggedIn");
+    const storedUserId = localStorage.getItem("userId");
+    
+    if (storedLogin === "true" && storedUserId) {
       setIsLoggedIn(true);
+      setUserId(storedUserId);
     }
   }, []);
 
-  const login = () => setIsLoggedIn(true);
+  // 로그인 함수
+  const login = (id: string) => {
+    setIsLoggedIn(true);
+    setUserId(id);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userId", id);
+  };
+
+  // 로그아웃 함수
   const logout = () => {
-    localStorage.removeItem('accessToken'); // 토큰 삭제
     setIsLoggedIn(false);
+    setUserId(null);
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userId");
+    sessionStorage.removeItem("sessionId"); // 세션 ID도 삭제
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, userId, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
+// 커스텀 훅
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
