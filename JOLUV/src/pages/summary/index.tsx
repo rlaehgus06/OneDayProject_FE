@@ -193,6 +193,7 @@ setCurrentPage(1);
 
     const payload = {
       lecId: targetCourse.lecid,
+     
       grade: Number(targetCourse.grade),
       semester: Number(targetCourse.semester),
       lecType: targetCourse.category,
