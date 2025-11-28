@@ -12,12 +12,12 @@ interface Course {
   grade: number;
   semester: number;
   isAdded?: boolean;
-  score?: string;
+  score: string;
 }
 
 const ITEMS_PER_PAGE = 10;
 
-const getScoreValue = (score: string = 'A+'): number => {
+const getScoreValue = (score: string): number => {
   const scoreMap: { [key: string]: number } = {
     'A+': 4.5, 'A0': 4.0,
     'B+': 3.5, 'B0': 3.0,
@@ -92,27 +92,24 @@ console.log('lecture 응답 데이터:', response.data);
 // 🔹 응답이 배열이 아니면 빈 배열로 처리
 
 // 🔹 내 수강 목록 가져오기
-//const myCoursesRes = await axios.get('/api/course/register');
+const myCoursesRes = await axios.get('/api/course/history');
 
-/*const myFetchedCourses: Course[] = myCoursesRes.data.map((course: any, idx: number) => ({
+const myFetchedCourses: Course[] = myCoursesRes.data.map((course: any, idx: number) => ({
   id: idx,
   lecid: course.lecid || course.lecId,
   name: course.lectureName || course.name,
   credits: course.credit || course.credits,
   category: course.lecType || course.category,
-  grade: course.grade ?? 0,
-  semester: course.semester ?? 0,
-  score: course.received_grade ? String(course.received_grade) : 'A+',
-  isAdded: true,
+  grade: course.received_grade
 }));
 
 setMyCourses(myFetchedCourses);
-*/
+
 
 // 🔹 백엔드 응답: [{ lecId, lectureName, lectureType, credit }, ...] 그대로 매핑
 const fetchedSearchResults: Course[] = response.data.map((course: any, idx: number) => {
   
-  //const alreadyExists = myFetchedCourses.some(my => my.lecid === course.lecId);
+  const alreadyExists = myFetchedCourses.some(my => my.lecid === course.lecId);
  
   return {
     id: idx,
@@ -123,7 +120,7 @@ const fetchedSearchResults: Course[] = response.data.map((course: any, idx: numb
     grade: hasGrade ? Number(selectedGrade) : 0,
     semester: hasSemester ? Number(selectedSemester) : 0,
     score: 'A+',
-    isAdded: false, //alreadyexists,
+    isAdded: alreadyExists, //alreadyexists,
   };
 });
 
@@ -158,10 +155,10 @@ setCurrentPage(1);
     if (newGrade === 'all') setSelectedSemester('all');
   };
 
-  const updateCourseInfo = async (lecid: string, lectype: string, score: string) => {
-    const payload = { lecid, lectype, received_grade: getScoreValue(score) };
+  const updateCourseInfo = async (lecId: string, lecType: string, score: string) => {
+    const payload = { lecId, lecType, grade:getScoreValue(score) };
     try {
-      await axios.post('/api/course/update', payload);
+      await axios.put('/api/course/update', payload);
     } catch (error) {
       console.error("정보 수정 실패:", error);
     }
@@ -169,31 +166,36 @@ setCurrentPage(1);
 
   const handleMyCourseCategoryChange = (id: number, newCategory: string) => {
     setMyCourses(prev => prev.map(c => c.id === id ? { ...c, category: newCategory } : c));
-    const target = myCourses.find(c => c.id === id);
-    if (target) updateCourseInfo(target.lecid, newCategory, target.score || 'A+');
   };
 
   const handleMyCourseScoreChange = (id: number, newScore: string) => {
     setMyCourses(prev => prev.map(c => c.id === id ? { ...c, score: newScore } : c));
-    const target = myCourses.find(c => c.id === id);
-    if (target) updateCourseInfo(target.lecid, target.category, newScore);
+    
   };
 
-  const handleSearchCategoryChange = (id: number, newCategory: string) => {
-    setSearchResults(prev => prev.map(c => c.id === id ? { ...c, category: newCategory } : c));
-  };
-  
+const handleSearchCategoryChange = (id: number, newCategory: string) => {
+  setSearchResults(prev => {
+    const next = prev.map(c =>
+      c.id === id ? { ...c, category: newCategory } : c
+    );
+
+    const changed = next.find(c => c.id === id);
+    console.log('카테고리 변경 후:', changed); // 여기서 category가 바뀌었는지 확인
+
+    return next;
+  });
+};
+
   const handleSearchScoreChange = (id: number, newScore: string) => {
     setSearchResults(prev => prev.map(c => c.id === id ? { ...c, score: newScore } : c));
   };
 
-  const handleAddMyCourse = async (id: number) => {
-    const targetCourse = searchResults.find(c => c.id === id);
+  const handleAddMyCourse = async (gwamok: Course) => {
+    const targetCourse = searchResults.find(c => c.id === gwamok.id);
     if (!targetCourse) return;
 
     const payload = {
       lecId: targetCourse.lecid,
-     
       grade: Number(targetCourse.grade),
       semester: Number(targetCourse.semester),
       lecType: targetCourse.category,
@@ -340,6 +342,10 @@ setCurrentPage(1);
                           <option>교양필수</option>
                           <option>교양선택</option>
                           <option>일반선택</option>
+                          <option>기본소양</option>
+                          <option>다중전공</option>
+                          <option>전공기반</option>
+                          <option>공학전공</option>
                         </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{course.credits}학점</td>
@@ -360,6 +366,12 @@ setCurrentPage(1);
                           className="text-gray-400 hover:text-red-500 font-medium transition-colors"
                         >
                           삭제
+                        </button>
+                        <button
+                          onClick={() => updateCourseInfo(course.lecid, course.category, course.score)}
+                          className="text-gray-400 hover:text-red-500 font-medium transition-colors"
+                        >
+                             수정
                         </button>
                       </td>
                     </tr>
@@ -399,15 +411,19 @@ setCurrentPage(1);
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={course.category}
-                        onChange={(e) => handleSearchCategoryChange(course.id, e.target.value)}
+                        onChange={(e) => handleSearchCategoryChange(course.id, e.target.value) }
                         className="text-sm border border-gray-300 rounded p-1 focus:ring-pink-400 focus:border-pink-400"
                       >
-                        <option>전공필수</option>
-                        <option>전공선택</option>
-                        <option>전공기초</option>
-                        <option>교양필수</option>
-                        <option>교양선택</option>
-                        <option>일반선택</option>
+                    <option>전공필수</option>
+                          <option>전공선택</option>
+                          <option>전공기초</option>
+                          <option>교양필수</option>
+                          <option>교양선택</option>
+                          <option>일반선택</option>
+                          <option>기본소양</option>
+                          <option>다중전공</option>
+                          <option>전공기반</option>
+                          <option>공학전공</option>
                       </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -432,7 +448,7 @@ setCurrentPage(1);
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <button
-                        onClick={() => handleAddMyCourse(course.id)}
+                        onClick={() => handleAddMyCourse(course)}
                         disabled={course.isAdded}
                         className={`px-4 py-1.5 rounded text-sm font-medium transition-all duration-200 ${
                           course.isAdded
