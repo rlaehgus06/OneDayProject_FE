@@ -21,7 +21,7 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('/api/signup', {
+      const response = await axios.post('/api/auth/signup', {
         userId: id,
         password: password,
         name: name,

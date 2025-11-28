@@ -6,7 +6,7 @@ const LoginPage: React.FC = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -15,12 +15,14 @@ const LoginPage: React.FC = () => {
       // axios.get은 데이터를 보낼 때 두 번째 인자에 { params: { ... } } 형태로 넣어야 합니다.
       const response = await axios.get('/api/auth/login', {
         params: {
-          username: id, 
+          userId: id, 
           password: password,
-        }
+        },
+        withCredentials: true, // 쿠키를 포함하려면 이 옵션을 추가합니다
       });
-
-      console.log('로그인 성공:', response.data);
+  
+      console.log('로그인 성공: kk', response.data.accessToken
+      );
       
       // 토큰 저장 (백엔드 응답 구조에 따라 다를 수 있음)
       if (response.data && response.data.accessToken) {
@@ -28,7 +30,7 @@ const LoginPage: React.FC = () => {
       }
 
       // alert('로그인되었습니다!');
-      navigate('/mypage'); 
+      
 
     } catch (error) {
       console.error('로그인 에러:', error);
@@ -46,6 +48,7 @@ const LoginPage: React.FC = () => {
         alert('서버와 연결할 수 없습니다.');
       }
     }
+    navigate('/summary'); 
   };
 
   return (
