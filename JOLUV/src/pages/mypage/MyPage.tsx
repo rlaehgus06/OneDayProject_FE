@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext'; // 👈 AuthContext 사용
 import './MyPage.css';
 
 // 사용자 정보 타입 정의
@@ -9,7 +10,7 @@ interface UserInfo {
   major: string;
   track: string;
   profileImage?: string;
-  studentId?: string; // 학번 추가 (선택적)
+  studentId?: string; // 학번 추가
 }
 
 interface ChecklistItem {
@@ -35,6 +36,9 @@ const checklist: ChecklistItem[] = [
 const initialCareers: CareerItem[] = [];
 
 const MyPage: React.FC = () => {
+  // ⭐️ Context에서 현재 로그인된 사용자 ID 가져오기
+  const { userId } = useAuth();
+
   const [user, setUser] = useState<UserInfo | null>(null);
   const [careers, setCareers] = useState<CareerItem[]>(initialCareers);
   const [form, setForm] = useState<CareerItem>({
@@ -44,65 +48,64 @@ const MyPage: React.FC = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-        const response = await axios.get('/api/auth/mypage', { headers });
+        // ⭐️ [중요 변경] 토큰 헤더 제거 -> 세션 쿠키 사용 (withCredentials: true)
+        const response = await axios.get('/api/auth/mypage', { 
+            withCredentials: true 
+        });
         
+        // ----------------------------------------------------------------
+        // 백엔드 응답 처리 (HTML 파싱 로직 유지)
+        // ----------------------------------------------------------------
         if (typeof response.data === 'string') {
-            // 1. HTML 문자열 파싱 시작
+            // 1. HTML 문자열 파싱
             const parser = new DOMParser();
             const doc = parser.parseFromString(response.data, 'text/html');
 
-            // 2. HTML 구조에 맞춰 데이터 추출 (백엔드 응답 HTML 구조 분석 필요)
-            // 예시: <p>환영합니다, <span>guest</span>님!</p>
+            // 2. HTML 구조에 맞춰 데이터 추출
             const welcomeP = Array.from(doc.querySelectorAll('p')).find(p => p.textContent?.includes('환영합니다'));
             const name = welcomeP?.querySelector('span')?.textContent || '이름 없음';
 
-            // 예시: <p><strong>아이디:</strong> <span>guest</span></p>
             const idSpan = Array.from(doc.querySelectorAll('p')).find(p => p.textContent?.includes('아이디:'))?.querySelector('span');
-            const userId = idSpan ? idSpan.textContent : '';
+            const fetchedUserId = idSpan ? idSpan.textContent : '';
 
-            // 예시: <p><strong>학번:</strong> <span>2022000000</span></p>
             const studentIdSpan = Array.from(doc.querySelectorAll('p')).find(p => p.textContent?.includes('학번:'))?.querySelector('span');
             const studentId = studentIdSpan ? studentIdSpan.textContent : '';
 
-            // input 태그 값 추출 (전공, 세부전공 등)
             const majorInput = doc.querySelector('input[name="major"]') as HTMLInputElement;
             const major = majorInput ? majorInput.value : '컴퓨터학부';
 
             const trackInput = doc.querySelector('input[name="specific_major"]') as HTMLInputElement;
             const track = trackInput ? trackInput.value : '트랙 정보 없음';
 
-            console.log('✅ 추출된 정보:', { name, userId, studentId, major, track });
+            console.log('✅ 추출된 정보:', { name, userId: fetchedUserId, studentId, major, track });
 
             setUser({
                 name: name || '이름 없음',
-                user_id: userId || '',
-                studentId: studentId || '', // 학번 저장
+                user_id: fetchedUserId || userId || '', // API에서 못 찾으면 Context ID 사용
+                studentId: studentId || '',
                 major: major,
                 track: track, 
                 profileImage: ''
             });
 
         } else {
-            // JSON 응답일 경우 (기존 로직)
+            // JSON 응답일 경우
             setUser({
                 name: response.data.name || '이름 없음',
-                user_id: response.data.userId || '',
+                user_id: response.data.userId || userId || '',
                 studentId: response.data.studentId || '',
-                major: '컴퓨터학부 SW글로벌 융합전공',
-                track: '다중전공트랙',
+                major: response.data.major || '컴퓨터학부 SW글로벌 융합전공',
+                track: response.data.track || '다중전공트랙',
                 profileImage: ''
             });
         }
 
       } catch (error) {
         console.error('데이터 가져오기 실패:', error);
-        // 실패 시 더미 데이터
+        // 실패 시 더미 데이터 (Context userId 활용)
         setUser({
           name: 'JOLUV (오프라인)',
-          user_id: 'guest',
+          user_id: userId || 'guest',
           studentId: '00000000',
           major: '컴퓨터학부 SW글로벌 융합전공',
           track: '다중전공트랙',
@@ -111,7 +114,7 @@ const MyPage: React.FC = () => {
     };
 
     fetchUserInfo();
-  }, []);
+  }, [userId]); // userId가 변경되면 재호출
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -145,7 +148,7 @@ const MyPage: React.FC = () => {
             <h1 className="user__name">
               {user ? `${user.name} 님` : '로딩 중...'}
             </h1>
-            {/* 학번 표시 추가 */}
+            {/* 학번 표시 */}
             {user?.studentId && (
                 <p className="text-sm text-gray-500 mb-1">학번: {user.studentId}</p>
             )}
@@ -171,7 +174,7 @@ const MyPage: React.FC = () => {
           </div>
         </header>
         <section className="mypage__checklist">
-          <h2>졸업 check List</h2>
+          <h2>졸업 Check List</h2>
           <div className="checklist__items">
             {checklist.map((item, idx) => (
               <div className="check__item" key={idx}>
@@ -198,7 +201,7 @@ const MyPage: React.FC = () => {
         <section className="career__section">
           <h2>경력 및 활동</h2>
           <div className="career__list">
-            {/* 👇 경력이 없을 때 안내 메시지 표시 */}
+            {/* 경력이 없을 때 안내 메시지 표시 */}
             {careers.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">등록된 경력 및 활동이 없습니다.</p>
             ) : (
