@@ -3,7 +3,7 @@ export interface Subject {
   name: string;
   credit: number;
   grade: string;
-  isCompulsory: boolean;
+  category: string;
   needsRetake: boolean;
 }
 

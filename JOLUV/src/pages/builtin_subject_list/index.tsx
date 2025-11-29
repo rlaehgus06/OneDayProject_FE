@@ -9,6 +9,9 @@ const Builtin: React.FC = () => {
   const [selectedSemester, setSelectedSemester] = useState<Semester>('1학기');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortType, setSortType] = useState<SortType>('name');
+  
+
+
 
   const subjects: Subject[] = [
     {
@@ -36,7 +39,7 @@ const Builtin: React.FC = () => {
       needsRetake: false
     }
   ];
-
+  
   const handleSemesterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSemester(event.target.value as Semester);
   };
