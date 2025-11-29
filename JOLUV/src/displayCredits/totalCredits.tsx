@@ -103,6 +103,10 @@ aria-valuemax={totalCredits}
 
 }
 
+<<<<<<< HEAD
+export default TotalCredits;
+=======
 
 
 export default TotalCredits;
+>>>>>>> 978e63cf32106d6251fa429e3ed526e32f08d823
