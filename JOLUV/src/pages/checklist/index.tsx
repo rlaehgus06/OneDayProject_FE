@@ -5,16 +5,14 @@ import axios from 'axios';
 // 1. 타입 정의 (백엔드 DTO와 일치)
 // ----------------------------------------------------------------------
 
-// 백엔드의 CheckItem DTO
 interface ApiCheckItem {
     category: string;
     current: number;
     required: number;
-    passed: boolean; // isPassed가 JSON에서는 passed로 넘어올 수 있음 (Lombok 설정 확인)
+    passed: boolean;
     message: string;
 }
 
-// 백엔드의 전체 응답 DTO
 interface GraduationResponse {
     majorType: string;
     studentId: number;
@@ -23,11 +21,10 @@ interface GraduationResponse {
     missingCourses: string[];
 }
 
-// 프론트엔드 컴포넌트용 Props
 interface RequirementRowProps {
     title: string;
     progress: string;
-    status: '완료' | '미완료'; // 백엔드는 이분법적이므로 단순화
+    status: '완료' | '미완료';
     percentage: number;
     message: string;
 }
@@ -42,7 +39,6 @@ const RequirementRow: React.FC<RequirementRowProps> = ({
                                                            percentage,
                                                            message
                                                        }) => {
-
     const getStatusBadge = () => {
         return status === '완료'
             ? 'bg-green-100 text-green-700'
@@ -52,7 +48,6 @@ const RequirementRow: React.FC<RequirementRowProps> = ({
     return (
         <div className="p-4 border-b hover:bg-gray-50 transition-colors">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                {/* 왼쪽: 제목 + 프로그레스 바 */}
                 <div className="flex-1 mb-4 sm:mb-0 mr-4">
                     <div className="flex justify-between items-end mb-1">
                         <span className="text-lg font-semibold text-gray-800">{title}</span>
@@ -64,15 +59,12 @@ const RequirementRow: React.FC<RequirementRowProps> = ({
                             style={{ width: `${percentage}%` }}
                         ></div>
                     </div>
-                    {/* 메시지 (ex: -3 부족) */}
                     <p className="text-xs text-gray-400 mt-1">{message}</p>
                 </div>
-
-                {/* 오른쪽: 상태 뱃지 */}
                 <div className="flex-shrink-0">
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge()}`}>
-            {status}
-          </span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge()}`}>
+                    {status}
+                  </span>
                 </div>
             </div>
         </div>
@@ -83,17 +75,14 @@ const RequirementRow: React.FC<RequirementRowProps> = ({
 // 3. 메인 페이지 컴포넌트
 // ----------------------------------------------------------------------
 const ChecklistPage: React.FC = () => {
-    // 상태 관리
     const [data, setData] = useState<GraduationResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    // 데이터 가져오기
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // 백엔드 API 호출 (프록시 설정이 안되어 있다면 http://localhost:8080 붙여야 함)
                 const response = await axios.get<GraduationResponse>(`/api/graduation/my-status`);
                 setData(response.data);
             } catch (err) {
@@ -129,19 +118,7 @@ const ChecklistPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* 2. 미이수 필수 과목 경고창 (있을 경우에만 표시) */}
-            {data.missingCourses && data.missingCourses.length > 0 && (
-                <section className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
-                    <h3 className="text-red-700 font-bold text-lg mb-2">🚨 미이수 필수 과목</h3>
-                    <ul className="list-disc list-inside text-red-600 space-y-1">
-                        {data.missingCourses.map((course, idx) => (
-                            <li key={idx}>{course}</li>
-                        ))}
-                    </ul>
-                </section>
-            )}
-
-            {/* 3. 요건 리스트 섹션 */}
+            {/* 2. 요건 리스트 섹션 (위로 이동됨) */}
             <h1 className="text-2xl font-bold text-gray-800 mb-4">졸업 요건 상세 점검</h1>
             <section className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="flex justify-between items-center p-4 bg-gray-50 border-b">
@@ -150,7 +127,6 @@ const ChecklistPage: React.FC = () => {
                 </div>
                 <div>
                     {data.checkList.map((item, index) => {
-                        // 백엔드 데이터를 프론트 컴포넌트 Props로 변환
                         const percent = item.required > 0
                             ? Math.min((item.current / item.required) * 100, 100)
                             : (item.passed ? 100 : 0);
@@ -159,16 +135,27 @@ const ChecklistPage: React.FC = () => {
                             <RequirementRow
                                 key={index}
                                 title={item.category}
-                                // 예: 130 / 140 (학점)
                                 progress={`${item.current} / ${item.required}`}
                                 status={item.passed ? '완료' : '미완료'}
                                 percentage={percent}
-                                message={item.message} // "통과" 또는 "-10 (부족)"
+                                message={item.message}
                             />
                         );
                     })}
                 </div>
             </section>
+
+            {/* 3. 미이수 필수 과목 경고창 (아래로 이동됨) */}
+            {data.missingCourses && data.missingCourses.length > 0 && (
+                <section className="bg-red-50 border border-red-200 rounded-lg p-4 mt-8"> {/* mt-8 추가하여 윗 요소와 간격 확보 */}
+                    <h3 className="text-red-700 font-bold text-lg mb-2">🚨 미이수 필수 과목</h3>
+                    <ul className="list-disc list-inside text-red-600 space-y-1">
+                        {data.missingCourses.map((course, idx) => (
+                            <li key={idx}>{course}</li>
+                        ))}
+                    </ul>
+                </section>
+            )}
         </div>
     );
 };
