@@ -67,7 +67,6 @@ function TotalCredits() {
           aria-valuemax={totalCredits}
         ></div>
       </div>
-
       <div className="text-center text-lg font-bold text-gray-700 pt-1">
         {displayPercentage}% 이수
       </div>
@@ -76,3 +75,5 @@ function TotalCredits() {
 }
 
 export default TotalCredits;
+
+
