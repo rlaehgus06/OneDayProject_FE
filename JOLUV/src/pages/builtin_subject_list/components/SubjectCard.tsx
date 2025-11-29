@@ -7,22 +7,24 @@ interface SubjectCardProps {
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
-  const { name, credit, grade, isCompulsory, needsRetake } = subject;
+  const { name, credit, grade, category, needsRetake, year, semester } = subject;
 
   return (
     <div className="subject-card">
       <div className="subject-name">{name}</div>
-      <div className="subject-info">
-        {credit}학점/{grade}
+
+      <div className="subject-meta">
+        <span className="subject-credit-pill">{credit}학점</span>
+        <span className="subject-grade-pill">성적 {grade}</span>
       </div>
-      
+
+      <div className="subject-extra">
+        {year}학년 · {semester}
+      </div>
+
       <div className="button-container">
-        {isCompulsory && (
-          <p className="compulsory-btn">전공필수</p>
-        )}
-        {needsRetake && (
-          <p className="retake-btn">재수강 필요</p>
-        )}
+        <span className="compulsory-btn">{category}</span>
+        {needsRetake && <span className="retake-btn">재수강 필요</span>}
       </div>
     </div>
   );

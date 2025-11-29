@@ -68,6 +68,7 @@ function TotalCredits() {
         ></div>
       </div>
 
+      {/* 백분율 표시 (percentage-display) */}
       <div className="text-center text-lg font-bold text-gray-700 pt-1">
         {displayPercentage}% 이수
       </div>

@@ -21,11 +21,13 @@ const MY_ITEMS_PER_PAGE = 5; // 내 수강 과목용
 
 const getScoreValue = (score: string): number => {
   const scoreMap: { [key: string]: number } = {
-    'A+': 4.5, 'A0': 4.0,
-    'B+': 3.5, 'B0': 3.0,
-    'C+': 2.5, 'C0': 2.0,
-    'D+': 1.5, 'D0': 1.0,
-    'F': 0.0, 'P': 0.0, 'NP': 0.0,
+    'A+': 4.3, 'A0': 4.0,
+    'A-': 3.7, 'B+': 3.3,
+    'B0': 3.0, 'B-': 2.7,
+    'C+': 2.4, 'C0': 2.0,
+    'C-': 1.7, 'D+': 1.4,
+    'D0': 1.0, 'D-': 0.7,
+    'F': 0.0, 'P': 5.0, 'NP': 0.0,
   };
   return scoreMap[score] || 0.0;
 };
@@ -111,7 +113,6 @@ const Summary: React.FC = () => {
       let response;
 
       if (hasSearchTerm) {
-        // 검색어 있으면 lecture/list
         response = await axios.get('/api/lecture/list', {
           params: {
             keyword: searchTerm,
@@ -120,12 +121,8 @@ const Summary: React.FC = () => {
           },
         });
       } else if (!hasGrade) {
-        // 검색어 X + 전체 학년
-        response = await axios.get('/api/lecture/list', {
-          params: {},
-        });
+        response = await axios.get('/api/lecture/list', { params: {} });
       } else if (hasGrade && hasSemester) {
-        // 검색어 X + 학년/학기 선택 -> standard
         response = await axios.get('/api/lecture/standard', {
           params: {
             grade: Number(selectedGrade),
@@ -133,15 +130,10 @@ const Summary: React.FC = () => {
           },
         });
       } else {
-        // 검색어 X + 학년만 선택
         response = await axios.get('/api/lecture/list', {
-          params: {
-            grade: Number(selectedGrade),
-          },
+          params: { grade: Number(selectedGrade) },
         });
       }
-
-      console.log('lecture 응답 데이터:', response.data);
 
       const fetchedSearchResults: Course[] = (response.data || []).map(
         (course: any, idx: number) => {
@@ -162,7 +154,6 @@ const Summary: React.FC = () => {
         }
       );
 
-      console.log('검색 결과:', fetchedSearchResults);
       setSearchResults(fetchedSearchResults);
       setCurrentPage(1);
     } catch (error) {
@@ -178,13 +169,9 @@ const Summary: React.FC = () => {
     const payload = { lecId, lecType, receivedGrade: getScoreValue(score) };
     try {
       await axios.put('/api/course/update', payload);
-
-      // 수정 완료 → 버튼 비활성화 상태로
       setMyCourses(prev =>
         prev.map(c =>
-          c.lecid === lecId
-            ? { ...c, isUpdated: true }
-            : c
+          c.lecid === lecId ? { ...c, isUpdated: true } : c
         )
       );
     } catch (error) {
@@ -283,76 +270,9 @@ const Summary: React.FC = () => {
 
       {/* 상단 요약 카드 */}
 
+      {/* 이수 과목 정리 + 내 수강 과목 */}
       <div className="bg-white p-6 rounded-xl shadow-md mb-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">이수 과목 정리</h2>
-
-        {/* 필터 섹션 */}
-        <div className="flex flex-wrap gap-4 mb-6 items-end">
-          <div className="w-40">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              학년
-            </label>
-            <select
-              value={selectedGrade}
-              onChange={handleGradeChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white cursor-pointer"
-            >
-              <option value="all">전체 학년</option>
-              <option value="1">1학년</option>
-              <option value="2">2학년</option>
-              <option value="3">3학년</option>
-              <option value="4">4학년</option>
-            </select>
-          </div>
-
-          {selectedGrade !== 'all' && (
-            <div className="w-40 animate-fade-in">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                학기
-              </label>
-              <select
-                value={selectedSemester}
-                onChange={e => setSelectedSemester(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white cursor-pointer"
-              >
-                <option value="all">전체 학기</option>
-                <option value="1">1학기</option>
-                <option value="2">여름학기</option>
-                <option value="3">2학기</option>
-                <option value="4">겨울학기</option>
-              </select>
-            </div>
-          )}
-
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              과목명 검색
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                placeholder="과목명을 입력하세요"
-                className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                🔍
-              </span>
-            </div>
-          </div>
-
-          {/* 조회 버튼 */}
-          <div className="w-32">
-            <button
-              onClick={handleSearchClick}
-              className="w-full p-3 mt-2 bg-pink-500 text-white font-semibold rounded-lg hover:bg-pink-600 transition disabled:bg-gray-300"
-              disabled={loading}
-            >
-              {loading ? '조회 중...' : '조회'}
-            </button>
-          </div>
-        </div>
 
         {/* 상단 리스트 (내 수강 과목) */}
         {myCourses.length > 0 && (
@@ -443,12 +363,16 @@ const Summary: React.FC = () => {
                         >
                           <option>A+</option>
                           <option>A0</option>
+                          <option>A-</option>
                           <option>B+</option>
                           <option>B0</option>
+                          <option>B-</option>
                           <option>C+</option>
                           <option>C0</option>
+                          <option>C-</option>
                           <option>D+</option>
                           <option>D0</option>
+                          <option>D-</option>
                           <option>F</option>
                           <option>P</option>
                           <option>NP</option>
@@ -542,6 +466,77 @@ const Summary: React.FC = () => {
           </div>
         )}
 
+        {/* 🔍 검색 필터 섹션 - 내 수강 과목 바로 아래, 조회 결과 위 */}
+        <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">🔍 강의 검색</h3>
+
+          <div className="flex flex-wrap gap-4 items-end">
+            <div className="w-40">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                학년
+              </label>
+              <select
+                value={selectedGrade}
+                onChange={handleGradeChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white cursor-pointer"
+              >
+                <option value="all">전체 학년</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+                <option value="4">4학년</option>
+              </select>
+            </div>
+
+            {selectedGrade !== 'all' && (
+              <div className="w-40 animate-fade-in">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  학기
+                </label>
+                <select
+                  value={selectedSemester}
+                  onChange={e => setSelectedSemester(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white cursor-pointer"
+                >
+                  <option value="all">전체 학기</option>
+                  <option value="1">1학기</option>
+                  <option value="2">여름학기</option>
+                  <option value="3">2학기</option>
+                  <option value="4">겨울학기</option>
+                </select>
+              </div>
+            )}
+
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                과목명 검색
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  placeholder="과목명을 입력하세요"
+                  className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                />
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  🔍
+                </span>
+              </div>
+            </div>
+
+            <div className="w-32">
+              <button
+                onClick={handleSearchClick}
+                className="w-full p-3 mt-2 bg-pink-500 text-white font-semibold rounded-lg hover:bg-pink-600 transition disabled:bg-gray-300"
+                disabled={loading}
+              >
+                {loading ? '조회 중...' : '조회'}
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* 하단 리스트 (조회 결과) */}
         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
           <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 font-bold text-gray-700 flex justify-between items-center">
@@ -634,12 +629,16 @@ const Summary: React.FC = () => {
                       >
                         <option>A+</option>
                         <option>A0</option>
+                        <option>A-</option>
                         <option>B+</option>
                         <option>B0</option>
+                        <option>B-</option>
                         <option>C+</option>
                         <option>C0</option>
+                        <option>C-</option>
                         <option>D+</option>
                         <option>D0</option>
+                        <option>D-</option>
                         <option>F</option>
                         <option>P</option>
                         <option>NP</option>
