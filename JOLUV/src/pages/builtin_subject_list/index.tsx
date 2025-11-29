@@ -13,7 +13,7 @@ interface Subject {
   id: number;
   name: string;
   credit: number;
-  grade: string;        // 표시용 등급 (A+, B0 ...)
+  grade: string | number;        // 표시용 등급 (A+, B0 ...)
   score: number;        // ⭐️ [추가] 정렬용 원본 점수 (4.3, 3.0 ...)
   category: string;
   needsRetake: boolean;

@@ -19,9 +19,9 @@ function gradeToString(grade: number): string {
     1.7: 'C-',
     1.3: 'D+',
     1.0: 'D0',
-    0: 'F',
+    0.0: 'F',
     5: 'P',   // 패스는 재이수 X라고 보고 높게
-    0: 'NP',
+    0.1: 'NP',
   };
   return map[grade] ?? 'NP';
 }
