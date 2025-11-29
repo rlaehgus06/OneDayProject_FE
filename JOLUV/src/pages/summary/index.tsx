@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import TotalCredits from '../../components/displayCredits/totalCredits';
-import EachCredits from '../../components/displayCredits/eachCredits';
+import TotalCredits from '../..//displayCredits/totalCredits';
+import EachCredits from '../..//displayCredits/eachCredits';
 
 interface Course {
   id: number;
@@ -248,17 +248,6 @@ const handleSearchCategoryChange = (id: number, newCategory: string) => {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">학점 관리</h1>
 
       {/* 상단 요약 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="md:col-span-2 lg:col-span-2">
-          <TotalCredits total={120} completed={90} percentage={75.0} />
-        </div>
-        <div className="md:col-span-1 lg:col-span-1">
-          <EachCredits title="전공 학점" score={50} />
-        </div>
-        <div className="md:col-span-1 lg:col-span-1">
-          <EachCredits title="교양 학점" score={30} />
-        </div>
-      </div>
 
       <div className="bg-white p-6 rounded-xl shadow-md mb-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">이수 과목 정리</h2>

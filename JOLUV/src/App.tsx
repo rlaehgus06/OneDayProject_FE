@@ -9,7 +9,7 @@ import SummaryPage from './pages/summary/index';
 import ChecklistPage from './pages/checklist/index'; 
 import { AuthProvider } from './contexts/AuthContext'; 
 import ProtectedRoute from './components/ProtectedRoute'; // 👈 import 추가
-import ScoreManagementPage from './pages/score_management';
+//import ScoreManagementPage from './pages/score_management';
 
 function App() {
   return (
@@ -30,7 +30,6 @@ function App() {
           
           <Route path="summary" element={<SummaryPage />} />
           <Route path="checklist" element={<ChecklistPage />} />
-          <Route path="score-management" element={<ScoreManagementPage />} /> 
           
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />

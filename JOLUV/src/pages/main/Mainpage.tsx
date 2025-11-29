@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import TotalCredits from '../../components/displayCredits/totalCredits';
-import EachCredits from '../../components/displayCredits/eachCredits';
+
+import TotalCredits from '../../displayCredits/totalCredits';
+import EachCredits from '../../displayCredits/eachCredits';
 
 // 이미지 import
 import sugangLogo from '../../assets/sugang_logo.jpg';
@@ -128,16 +129,21 @@ const MainPage: React.FC = () => {
 
         </div>
 
-        {/* 학점 현황 섹션 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max-w-7xl mx-auto">
-          <div className="md:col-span-2 lg:col-span-2">
-            <TotalCredits total={120} completed={90} percentage={75.0} />
-          </div>
-          <div className="md:col-span-1 lg:col-span-1">
-            <EachCredits title="전공 학점" score={50} />
-          </div>
-          <div className="md:col-span-1 lg:col-span-1">
-            <EachCredits title="교양 학점" score={30} />
+        <div className="max-w-7xl mx-auto mb-12">
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 pl-2 border-l-4 border-pink-400">
+            📊 나의 이수 현황
+          </h3>
+          
+          <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+            {/* 1. 전체 이수율 표시 (왼쪽, 약 35% 너비) */}
+            <div className="w-full lg:w-[35%]">
+              <TotalCredits />
+            </div>
+
+            {/* 2. 전공/교양 상세 표시 (오른쪽, 약 65% 너비) */}
+            <div className="w-full lg:w-[65%]">
+              <EachCredits />
+            </div>
           </div>
         </div>
         
@@ -145,5 +151,4 @@ const MainPage: React.FC = () => {
     </>
   );
 };
-
 export default MainPage;
