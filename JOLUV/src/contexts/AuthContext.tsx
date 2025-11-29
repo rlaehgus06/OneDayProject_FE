@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import type { ReactNode } from 'react';
 // Context에서 관리할 데이터 타입 정의
 interface AuthContextType {
   isLoggedIn: boolean;
