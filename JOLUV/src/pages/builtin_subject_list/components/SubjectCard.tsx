@@ -7,7 +7,7 @@ interface SubjectCardProps {
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
-  const { name, credit, grade, category, needsRetake, year, semester } = subject;
+  const { name, credit, grade, category, needsRetake, } = subject;
 
   return (
     <div className="subject-card">
@@ -19,7 +19,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
       </div>
 
       <div className="subject-extra">
-        {year}학년 · {semester}
+
       </div>
 
       <div className="button-container">

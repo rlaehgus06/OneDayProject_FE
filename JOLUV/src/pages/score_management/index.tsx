@@ -18,8 +18,8 @@ export default function ScoreManagementPage() {
         </div>
       </div>
 
-      <div className="score-management-container max-w-[1360px] mx-auto mt-14">
-        <div className="border-2 border-pink-400 rounded-xl p-8 bg-white">
+      <div className="score-management-container w-full max-w-[1360px] mx-auto mt-14 ">
+        <div className="border-2 border-black-400 rounded-xl p-8 bg-white h-[500px] overflow-y-auto custom-scrollbar">
           <Builtin />
         </div>
       </div>

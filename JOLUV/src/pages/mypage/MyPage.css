@@ -71,6 +71,7 @@
 .mypage__internship h2,
 .mypage__gpa h2,
 .career__section h2 {
+  margin-top: 40px;
   font-size: 1.25rem;
   font-weight: 700;
   color: #334155;
@@ -697,25 +698,3 @@
     padding: 20px 0;
 }
 
-/* --- 고정 트랙 (핑크색 텍스트) 스타일 --- */
-
-.fixed-track-display {
-    flex-grow: 1; /* 남은 공간 차지 */
-    display: flex;
-    align-items: center;
-    padding: 10px 0; /* 높이 맞춤 */
-}
-
-.fixed-track-text {
-    color: #ff4081; /* 🌸 요청하신 핑크색 */
-    font-size: 1.1rem;
-    font-weight: bold;
-    letter-spacing: -0.5px;
-}
-
-.fixed-track-info {
-    font-size: 0.8rem;
-    color: #ff80ab; /* 연한 핑크색 안내 문구 */
-    margin-top: 8px;
-    margin-left: 2px;
-}

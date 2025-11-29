@@ -47,7 +47,8 @@ function TotalCredits() {
   const progressBarWidth = Math.min(progressPercentage, 100);
 
   return (
-    <div className="max-w-xl mx-auto p-6 border border-gray-200 rounded-xl shadow-lg bg-white space-y-4 h-full">
+    // ⭐️ 수정됨: max-w-xl mx-auto 제거 -> w-full h-full로 변경하여 부모 크기에 맞춤 (왼쪽 정렬됨)
+    <div className="w-full h-full p-6 border border-gray-200 rounded-xl shadow-lg bg-white space-y-4">
       <h2 className="text-xl font-semibold text-center text-gray-800 border-b pb-3">
         졸업 학점 이수 현황
       </h2>
@@ -67,6 +68,7 @@ function TotalCredits() {
           aria-valuemax={totalCredits}
         ></div>
       </div>
+
       <div className="text-center text-lg font-bold text-gray-700 pt-1">
         {displayPercentage}% 이수
       </div>
@@ -75,5 +77,3 @@ function TotalCredits() {
 }
 
 export default TotalCredits;
-
-
