@@ -2,7 +2,7 @@ export interface Subject {
   id: number;
   name: string;
   credit: number;
-  grade: string;
+  grade: number;
   category: string;
   needsRetake: boolean;
 }
