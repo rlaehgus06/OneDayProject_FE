@@ -1,210 +1,721 @@
+/* ... (기존 스타일 유지) ... */
+
+/* 전체 레이아웃 */
 .mypage__layout {
   display: flex;
-  align-items: stretch;      /* 세로 높이 자동 맞춤 */
-  gap: 0;                    /* 박스 사이 여백 완전 제거 */
-  justify-content: center;
-  width: 100%;
-  min-height: 700px;         /* 원하는 전체 높이 */
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.mypage__container,
-.box__right {
-  flex: 1 1 0;
-  min-width: 440px;
-  min-height: 700px;
-  padding: 48px 32px;
-  margin: 0;
-  box-shadow: 0 8px 32px rgba(0,0,0, 0.04); /* 같은 그림자 */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+@media (min-width: 768px) {
+  .mypage__layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }
 
 .mypage__container {
-  background: #fff;
-  border-radius: 24px 0 0 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+}
+
+.box__left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .box__right {
-  background: #f6f4f8;
-  border-radius: 0 24px 24px 0;
+  flex: 1;
 }
 
-/* 프로필/헤더 섹션 */
+/* 헤더 프로필 영역 */
 .mypage__header {
   display: flex;
-  gap: 32px;
   align-items: center;
-  margin-bottom: 32px;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
 }
+
 .profile__img {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  background: #ddd;
-}
-.user__name {
-  font-size: 2rem;
-  margin-bottom: 4px;
-  font-weight: bold;
-}
-.user__info {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-.user__track {
-  font-size: 1rem;
-  color: #e44097;
+  background-color: #fcd34d; /* 노란색 별 */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  flex-shrink: 0; 
 }
 
-/* 졸업 체크리스트 */
-.mypage__checklist h2 {
-  font-size: 1.15rem;
-  margin-bottom: 8px;
-  color: #333;
+.user__name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
 }
-.checklist__items {
-  margin-top: 20px;
+
+.user__info {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0 0 4px 0;
 }
-.check__item {
+
+/* 섹션 제목 공통 스타일 */
+.mypage__track-section h2,
+.mypage__score h2,
+.mypage__internship h2,
+.mypage__gpa h2,
+.career__section h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #334155;
   margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  padding-left: 8px;
+  border-left: 4px solid #f472b6; /* Pink-400 */
 }
-.item__top {
+
+.score__content {
+  background-color: #f8fafc;
+  padding: 24px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.score__item {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 1.08rem;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-.item__status {
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.98rem;
-  background: #faf3cb;
-  color: #888;
-  font-weight: bold;
-}
-.item__status.working { background: #faf3cb; color: #e44097; }
-.item__status.notdone { background: #eee; color: #bbb; }
-.item__bar {
-  position: relative;
-  background: #eee;
-  height: 8px;
-  border-radius: 12px;
-}
-.item__bar--active {
-  position: absolute;
-  height: 100%;
-  background: #e44097;
-  border-radius: 12px;
+  width: 100%;
+  justify-content: center;
 }
 
-/* 경력 및 활동 */
-.career__section h2 {
-  font-size: 1.2rem;
-  margin-bottom: 18px;
-  color: #e44097;
+.score__label {
+  font-weight: 600;
+  color: #1e293b;
+  width: 60px;
 }
+
+.track-label {
+  width: auto;
+  min-width: 50px;
+}
+
+.track__fixed-value {
+  padding: 8px 16px;
+  background-color: #fce7f3; /* 💖 Pink-100 */
+  color: #000000; /* 🖤 */
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid #fbcfe8; /* 💖 Pink-200 */
+  flex: 1;
+  text-align: center;
+  max-width: 250px;
+}
+
+.score__input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score__input {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  text-align: right;
+  font-size: 1rem;
+  width: 120px;
+}
+
+.track__select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
+  max-width: 250px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.score__input:focus,
+.track__select:focus {
+  outline: none;
+  border-color: #f472b6;
+  box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.2);
+}
+
+.score__unit {
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* 체크박스 스타일 */
+.score__checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.checkbox-label:hover {
+  background-color: #e2e8f0;
+}
+
+.checkbox-input {
+  width: 18px;
+  height: 18px;
+  accent-color: black;
+  cursor: pointer;
+}
+
+.checkbox-text {
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+/* 버튼 스타일 */
+.score__save-btn {
+  background-color: #f472b6; 
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.score__save-btn:hover {
+  background-color: #ec4899;
+}
+
+.score__save-btn.secondary {
+  background-color: #f472b6;
+  margin-top: 0;
+}
+
+.score__save-btn.secondary:hover {
+  background-color: #ec4899;
+}
+
+/* 학점 관리 섹션 스타일 */
+.gpa__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.gpa__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gpa__divider {
+  width: 1px;
+  height: 50px;
+  background-color: #e2e8f0;
+  margin: 0 20px;
+}
+
+.gpa__label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.gpa__value-wrapper {
+  display: flex;
+  align-items: baseline;
+}
+
+.gpa__value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.gpa__value.highlight {
+  color: #f472b6;
+}
+
+.gpa__max {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-left: 2px;
+  font-weight: 500;
+}
+
+/* 경력 섹션 */
 .career__list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
+
 .career__item {
   display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   align-items: flex-start;
-  gap: 14px;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(228,64,151,0.04);
-  padding: 12px 14px;
 }
+
 .career__badge {
-  font-size: 0.9rem;
-  font-weight: bold;
-  padding: 3px 10px;
-  border-radius: 12px;
-  background: #e44097;
-  color: #fff;
-  min-width: 51px;
-  text-align: center;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  white-space: nowrap;
 }
-.career__badge--인턴십 { background: #6e8ad8; }
-.career__badge--대회 { background: #e44097; }
+
+.career__badge--대회 {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.career__badge--인턴십 {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
 .career__info {
   flex: 1;
 }
-.career__title { font-size: 1.12rem; font-weight: bold; }
-.career__sub { font-size: 0.99rem; color: #888; margin-top: 2px;}
-.career__year { font-size: 0.92rem; color: #b889c7; margin-top: 2px;}
 
-/* 반응형: 모바일 시 세로로 변경 */
-@media (max-width: 900px) {
-  .mypage__layout {
-    flex-direction: column;
-    min-height: auto;
-  }
-  .mypage__container, .box__right {
-    border-radius: 24px;
-    min-width: 0;
-    min-height: 400px;
-    margin-bottom: 16px;
-  }
+.career__title {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.95rem;
 }
+
+.career__sub {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.career__year {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* 경력 입력 폼 */
 .career__form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 32px;
-  background: #f8f8fa;
-  border-radius: 14px;
-  padding: 12px 10px;
-  align-items: stretch;
-}
-.career__form-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.career__form select, .career__form input {
-  font-size: 1rem;
-  border: 1px solid #eee;
+  gap: 8px;
+  background-color: #f8fafc;
+  padding: 16px;
   border-radius: 8px;
-  padding: 6px 10px;
-  outline: none;
-  flex: 1;
-}
-.career__form button {
-  background: #e44097;
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  cursor: pointer;
-  font-size: 1rem;
-  flex-shrink: 0;
 }
 
-.career-ani-enter {
-  opacity: 0;
-  transform: translateY(40px);
+.career__form-row {
+  display: flex;
+  gap: 8px;
 }
-.career-ani-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+
+.career__form input,
+.career__form select {
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
-.career-ani-exit {
-  opacity: 1;
-  transform: translateY(0);
+
+.career__form input:focus,
+.career__form select:focus {
+  outline: none;
+  border-color: #f472b6;
+  box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.2);
 }
-.career-ani-exit-active {
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+
+.career__form select {
+  width: 30%;
+}
+
+.career__form input[name="title"] {
+  flex: 1;
+}
+
+.career__form input[name="sub"] {
+  flex: 1;
+}
+
+.career__form input[name="year"] {
+  width: 20%;
+}
+
+.career__form button {
+  background-color: #f472b6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.career__form button:hover {
+  background-color: #ec4899;
+}
+
+/* ⭐️ Toast Notification Style (새로 추가됨) */
+.toast-notification {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 0.95rem;
+  font-weight: 500;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideUpFade 0.4s ease-out forwards;
+}
+
+.toast-icon {
+  font-size: 1.2rem;
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+/* 수정/삭제 버튼 영역 */
+.career__item {
+    position: relative; /* 버튼 배치를 위해 */
+    padding-right: 60px; /* 버튼 공간 확보 */
+}
+
+.career__actions {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    transition: transform 0.2s;
+}
+
+.action-btn:hover {
+    transform: scale(1.2);
+}
+
+/* 수정 모드 스타일 */
+.career__edit-mode {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.edit-row {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-select {
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.edit-input-year {
+    width: 100px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.edit-input-full {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.btn-save {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+/* --- 경력 및 활동 섹션 스타일 개선 --- */
+
+/* 전체 리스트 컨테이너 */
+.career__list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* 개별 활동 카드 (보기 모드) */
+.career__card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    transition: box-shadow 0.2s;
+}
+
+.career__card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.view-year {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 500;
+}
+
+.view-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 4px 0;
+}
+
+.view-detail {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0;
+}
+
+/* 뱃지 스타일 */
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.badge--대회 { background-color: #e3f2fd; color: #1976d2; }
+.badge--인턴십 { background-color: #e8f5e9; color: #388e3c; }
+.badge--자격증 { background-color: #fff3e0; color: #f57c00; }
+.badge--기타 { background-color: #f5f5f5; color: #616161; }
+
+/* 보기 모드에서의 버튼들 */
+.view-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+.icon-btn:hover { opacity: 1; }
+.icon-btn.delete:hover { transform: scale(1.1); }
+
+
+/* --- 입력/수정 폼 공통 스타일 (요청하신 레이아웃) --- */
+.career__add-form,
+.career__edit-form {
+    background-color: #f9fafb; /* 연한 회색 배경 */
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* 행 간격 */
+}
+
+/* 1행: 카테고리(30%) + 년도(70%) */
+.form-row.top-row {
+    display: flex;
+    gap: 10px;
+}
+
+.custom-select {
+    flex: 3; /* 비율 3 */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: white;
+}
+
+.custom-input.year-input {
+    flex: 7; /* 비율 7 */
+}
+
+/* 공통 인풋 스타일 */
+.custom-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    transition: border-color 0.2s;
+}
+
+.custom-input:focus,
+.custom-select:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+.title-input {
+    font-weight: bold;
+}
+
+/* 추가하기/저장 버튼 */
+.btn-submit-full {
+    background-color: #333;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 5px;
+    transition: background 0.2s;
+}
+.btn-submit-full:hover { background-color: #000; }
+
+.btn-save {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-cancel {
+    padding: 8px 16px;
+    background-color: #9e9e9e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: 20px 0;
+}
+.form-title {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #444;
+}
+.empty-message {
+    text-align: center;
+    color: #999;
+    padding: 20px 0;
+}
+
+/* --- 고정 트랙 (핑크색 텍스트) 스타일 --- */
+
+.fixed-track-display {
+    flex-grow: 1; /* 남은 공간 차지 */
+    display: flex;
+    align-items: center;
+    padding: 10px 0; /* 높이 맞춤 */
+}
+
+.fixed-track-text {
+    color: #ff4081; /* 🌸 요청하신 핑크색 */
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+}
+
+.fixed-track-info {
+    font-size: 0.8rem;
+    color: #ff80ab; /* 연한 핑크색 안내 문구 */
+    margin-top: 8px;
+    margin-left: 2px;
 }

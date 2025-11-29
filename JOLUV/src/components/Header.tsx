@@ -10,7 +10,6 @@ const Header: React.FC = () => {
   // 로그아웃 핸들러
   const handleLogout = () => {
     logout(); // 전역 상태에서 로그아웃 처리 (토큰 삭제 등)
-    alert('로그아웃되었습니다.');
     navigate('/'); // 메인 페이지로 이동
   };
 
