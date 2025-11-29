@@ -7,14 +7,15 @@
 }
 
 .header {
-  display: flex;
-  gap: 16px;
+  /* display: flex; -> Tailwind 클래스(flex)와 충돌 방지를 위해 제거 또는 주석 처리 */
+  /* gap: 16px; */
   margin-bottom: 24px;
   align-items: center;
 }
 
 .header select,
 .header input {
+  /* Tailwind로 스타일링 중이므로 필요 시에만 사용 */
   padding: 8px 12px;
   border: 2px solid #ccc;
   border-radius: 4px;
@@ -29,11 +30,16 @@
   cursor: pointer;
 }
 
+/* ⭐️ 수정됨: 여기가 문제입니다! */
+/* Tailwind의 'grid' 클래스가 작동하도록 display: flex를 제거해야 합니다. */
 .cards-container {
-  display: flex;
-  gap: 64px;
-  flex-wrap: wrap;
+  /* display: flex;  <-- 이 줄이 Grid 레이아웃을 막고 있었습니다. 제거! */
+  /* gap: 64px;      <-- Tailwind의 gap-4와 충돌하므로 제거! */
+  /* flex-wrap: wrap; <-- Grid에서는 불필요 */
+  
+  width: 100%;
 }
+
 .metrics-panel {
   display: flex;
   align-items: center;
@@ -42,7 +48,7 @@
 }
 
 .metric-box {
-  background: #fc0367;
+  background: black;
   border-radius: 12px;
   padding: 18px 24px;
   font-size: 18px;

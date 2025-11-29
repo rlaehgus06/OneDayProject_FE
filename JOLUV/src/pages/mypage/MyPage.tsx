@@ -15,8 +15,8 @@ interface UserInfo {
   profileImage?: string;
   studentId?: string;
   eng_score?: number;
-  totalGpa?: number;
-  majorGpa?: number;
+  gpa?: number; // 전체 평점
+  gpa_major?: number; // 전공 평점
   internship?: boolean;
 }
 
@@ -75,16 +75,15 @@ const MyPage: React.FC = () => {
       }
   };
 
-  // ⭐️ [로직 추가] 전공에 따라 강제 고정될 트랙명을 반환하는 함수
   const getFixedTrackValue = (majorName: string): string | null => {
-      const refinedMajor = majorName.replace(/\s+/g, ''); // 공백 제거 후 비교
+      const refinedMajor = majorName.replace(/\s+/g, '');
       if (refinedMajor.includes('심화컴퓨팅전공')) {
           return '심화컴퓨팅전공트랙';
       }
       if (refinedMajor.includes('인공지능컴퓨팅전공')) {
           return '인공지능트랙';
       }
-      return null; // 그 외에는 고정 아님
+      return null;
   };
 
   // ----------------------------------------------------------------------
@@ -95,14 +94,18 @@ const MyPage: React.FC = () => {
       try {
         const userRes = await axios.get('/api/auth/mypage', { withCredentials: true });
         
+        // 🔍 [디버깅] 콘솔에서 실제 들어오는 데이터를 확인해보세요!
+        console.log("MyPage Data:", userRes.data);
+
         let currentUserStudentId = 0;
         let fetchedUser: UserInfo | null = null;
 
-        if (typeof userRes.data === 'string') {
-            // HTML 파싱 (기존 로직 유지)
+        const data = userRes.data;
+
+        if (typeof data === 'string') {
+            // HTML 파싱 로직 (기존 유지)
             const parser = new DOMParser();
-            const doc = parser.parseFromString(userRes.data, 'text/html');
-            
+            const doc = parser.parseFromString(data, 'text/html');
             const welcomeP = Array.from(doc.querySelectorAll('p')).find(p => p.textContent?.includes('환영합니다'));
             const name = welcomeP?.querySelector('span')?.textContent || '이름 없음';
             const idSpan = Array.from(doc.querySelectorAll('p')).find(p => p.textContent?.includes('아이디:'))?.querySelector('span');
@@ -126,16 +129,16 @@ const MyPage: React.FC = () => {
                 major: major,
                 track: track, 
                 eng_score: score,
-                totalGpa: 0.0, 
-                majorGpa: 0.0,
+                gpa: 0.0, 
+                gpa_major: 0.0,
                 internship: isInternship,
                 profileImage: ''
             };
 
         } else {
-            // JSON 응답 처리
-            const data = userRes.data;
+            // ⭐️ [JSON 처리 수정] 안전한 타입 변환 적용
             currentUserStudentId = parseInt(data.studentId || '0');
+            
             fetchedUser = {
                 name: data.name || '이름 없음',
                 user_id: data.userId || userId || '',
@@ -143,26 +146,25 @@ const MyPage: React.FC = () => {
                 major: data.major || '컴퓨터학부',
                 track: data.track || '다중전공트랙',
                 eng_score: data.eng_score || 0,
-                totalGpa: data.total_gpa || 0.0,
-                majorGpa: data.major_gpa || 0.0,
+                
+                // ⭐️ Number()로 감싸서 문자열/숫자 모두 처리 가능하도록 수정
+                gpa: Number(data.gpa) || 0.0,       
+                gpa_major: Number(data.gpa_major) || 0.0, 
+                
                 internship: data.internship || false,
                 profileImage: ''
             };
         }
 
-        // 상태 업데이트
         if (fetchedUser) {
             setUser(fetchedUser);
             setEngScoreInput((fetchedUser.eng_score || 0).toString());
             setInternshipChecked(fetchedUser.internship || false);
 
-            // ⭐️ [로직 수정] 전공에 따라 트랙 강제 설정
             const fixedTrack = getFixedTrackValue(fetchedUser.major);
             if (fixedTrack) {
-                // 강제 고정 전공이면 무조건 해당 트랙으로 설정
                 setSelectedTrack(fixedTrack);
             } else {
-                // 아니라면 DB에서 가져온 값 설정
                 setSelectedTrack(fetchedUser.track || '다중전공트랙');
             }
         }
@@ -294,26 +296,21 @@ const MyPage: React.FC = () => {
       } catch(e) { console.error(e); showToastMessage('저장 실패'); }
   };
 
-  // ⭐️ [UI 헬퍼] 현재 유저가 트랙 고정 대상인지 확인
   const isTrackFixed = () => {
       if (!user) return false;
       return getFixedTrackValue(user.major) !== null;
   };
 
-  // ⭐️ [UI 헬퍼] 트랙 옵션 렌더링 (고정된 경우 해당 옵션만 보임)
   const renderTrackOptions = () => { 
     if (!user) return <option disabled>로딩 중...</option>;
     const majorName = user.major.replace(/\s+/g, '');
     
-    // 1. 심화컴퓨팅전공 -> 심화컴퓨팅전공트랙 고정
     if (majorName.includes('심화컴퓨팅전공')) {
         return <option value="심화컴퓨팅전공트랙">심화컴퓨팅전공트랙</option>;
     }
-    // 2. 인공지능컴퓨팅전공 -> 인공지능트랙 고정
     else if (majorName.includes('인공지능컴퓨팅전공')) {
-        return <option value="인공지능트랙">인공지능컴퓨팅전공트랙</option>;
+        return <option value="인공지능트랙">인공지능트랙</option>;
     }
-    // 3. 글로벌SW 등 -> 선택 가능
     else if (majorName.includes('글로벌SW융합전공') || majorName.includes('글로벌소프트웨어융합전공')) {
         return (
             <>
@@ -323,7 +320,6 @@ const MyPage: React.FC = () => {
             </>
         );
     }
-    // 4. 그 외(일반 컴퓨터학부 등)
     return (
         <>
             <option value="일반과정">일반과정</option>
@@ -332,9 +328,6 @@ const MyPage: React.FC = () => {
     );
   };
 
-  // ----------------------------------------------------------------------
-  // 6. 렌더링
-  // ----------------------------------------------------------------------
   return (
     <div className="mypage__layout">
       {toast.show && (
@@ -344,6 +337,7 @@ const MyPage: React.FC = () => {
         </div>
       )}
 
+      {/* 왼쪽 섹션 */}
       <div className="mypage__container box__left">
          <header className="mypage__header">
             <div className="profile__img" />
@@ -358,26 +352,21 @@ const MyPage: React.FC = () => {
             </div>
          </header>
 
-         {/* 세부 트랙 정보 */}
          <section className="mypage__track-section">
              <h2>세부 트랙 정보</h2>
              <div className="score__content">
                  <div className="score__item">
-                     {/* 고정된 경우 레이블을 조금 다르게 표시하거나 기존 유지 */}
                      <label className="score__label track-label">트랙</label>
-
                      <select 
                        value={selectedTrack} 
                        onChange={handleTrackChange}
                        className="track__select"
-                       // ⭐️ [UI 적용] 트랙이 고정된 경우 비활성화(disabled) 처리
                        disabled={isTrackFixed()}
                        style={isTrackFixed() ? { backgroundColor: '#f0f0f0', color: 'black', cursor: 'not-allowed' } : {}}
                      >
                        {renderTrackOptions()}
                      </select>
                  </div>
-                 {/* ⭐️ 트랙이 고정된 경우 저장 버튼 숨김 (필요 없으므로) */}
                  {!isTrackFixed() && (
                     <button onClick={handleUpdateInfo} className="score__save-btn secondary">트랙 저장</button>
                  )}
@@ -417,7 +406,9 @@ const MyPage: React.FC = () => {
          </section>
       </div>
 
+      {/* 오른쪽 섹션 */}
       <div className="mypage__container box__right">
+        
         {/* 학점 현황 */}
         <section className="mypage__gpa">
           <h2>학점 현황</h2>
@@ -426,7 +417,8 @@ const MyPage: React.FC = () => {
               <div className="gpa__item">
                   <span className="gpa__label">전체 학점</span>
                   <div className="gpa__value-wrapper">
-                    <span className="gpa__value">{user?.totalGpa?.toFixed(2) || "0.00"}</span>
+                    {/* ⭐️ Number 타입 보장 및 소수점 처리 */}
+                    <span className="gpa__value">{user?.gpa?.toFixed(2) || "0.00"}</span>
                     <span className="gpa__max"> / 4.3</span>
                   </div>
               </div>
@@ -434,7 +426,7 @@ const MyPage: React.FC = () => {
               <div className="gpa__item">
                   <span className="gpa__label">전공 학점</span>
                   <div className="gpa__value-wrapper">
-                    <span className="gpa__value highlight">{user?.majorGpa?.toFixed(2) || "0.00"}</span>
+                    <span className="gpa__value highlight">{user?.gpa_major?.toFixed(2) || "0.00"}</span>
                     <span className="gpa__max"> / 4.3</span>
                   </div>
               </div>
