@@ -416,7 +416,7 @@ const Summary: React.FC = () => {
                   <button
                     onClick={() => setMyPage(1)}
                     disabled={myPage === 1}
-                    className="px-2 py-1 rounded bg-white border border-pink-200 text-pink-600 disabled:opacity-30 hover:bg-pink-100"
+                     className="px-2 py-1 rounded bg-white border border-pink-200 text-pink-600 disabled:opacity-30 hover:bg-pink-100"
                   >
                     {'<<'}
                   </button>
