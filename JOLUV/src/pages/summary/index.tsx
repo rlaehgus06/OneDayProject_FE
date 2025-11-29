@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import TotalCredits from '../..//displayCredits/totalCredits';
-import EachCredits from '../..//displayCredits/eachCredits';
 
 interface Course {
   id: number;
